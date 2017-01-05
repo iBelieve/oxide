@@ -11,17 +11,21 @@ SECTIONS {
     }
 
     .text ALIGN (4K) : {
-		*(.text)
+		*(.text .text.*)
 	}
 
 	.rodata ALIGN (4K) :
 	{
-		*(.rodata)
+		*(.rodata .rodata.*)
 	}
+
+    .data.rel.ro ALIGN (4K) : {
+        *(.data.rel.ro.local*) *(.data.rel.ro .data.rel.ro.*)
+    }
 
     .data ALIGN (4K) :
 	{
-		*(.data)
+		*(.data .data.*)
 	}
 
 	.bss ALIGN (4K) : {
