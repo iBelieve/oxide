@@ -1,12 +1,17 @@
+ARCH=x86_64
+TARGET=$(ARCH)-unknown-none-gnu
+
 # Directories
 PREFIX=tools/bin
-TARGET_DIR=target/x86_64-unknown-none-gnu/debug
+TARGET_DIR=target/$(TARGET)/debug
 OUT_DIR=$(TARGET_DIR)/build
-ARCH_DIR=kernel/src/x86_64
+SRC_DIR=kernel/src
+ARCH_DIR=$(SRC_DIR)/arch/$(ARCH)
 
 # Source & output files
-ASM_SOURCE_FILES := $(wildcard $(ARCH_DIR)/*.asm)
-ASM_OUT_FILES := $(patsubst $(ARCH_DIR)/%.asm, $(OUT_DIR)/%.o, $(ASM_SOURCE_FILES))
+ASM_SRC_FILES := $(wildcard $(ARCH_DIR)/*.asm)
+ASM_OUT_FILES := $(patsubst $(ARCH_DIR)/%.asm, $(OUT_DIR)/%.o, $(ASM_SRC_FILES))
+SRC_FILES := $(shell find $(SRC_DIR) -name '*.rs')
 
 # Tools
 MAKE_ISO=tools/bin/grub-mkrescue
@@ -20,12 +25,12 @@ all: osdev.iso
 
 iso: osdev.iso
 
-$(TARGET_DIR)/libkernel.a: kernel/**
-	$(CARGO) build --target=x86_64-unknown-none-gnu --package kernel
+$(TARGET_DIR)/libkernel.a: Cargo.toml kernel/Cargo.toml $(SRC_FILES)
+	$(CARGO) build --target=$(TARGET) --package kernel
 
-$(TARGET_DIR)/osdev.bin: $(ARCH_DIR)/linker.ld $(TARGET_DIR)/libkernel.a $(ASM_OUT_FILES)
+$(TARGET_DIR)/osdev.bin: $(ARCH_DIR)/linker.ld $(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
 	$(LD) --gc-sections --nmagic -T $(ARCH_DIR)/linker.ld -o $(TARGET_DIR)/osdev.bin \
-			$(TARGET_DIR)/libkernel.a $(ASM_OUT_FILES)
+			$(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
 
 $(OUT_DIR)/%.o: $(ARCH_DIR)/%.asm
 	mkdir -p $(shell dirname $@)
