@@ -1,0 +1,6 @@
+# The cross-compile toolchain and related tools
+tools
+
+# Intermediate build directories and other build artifacts
+target
+osdev.iso

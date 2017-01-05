@@ -1,0 +1,11 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+rlibc = "*"
