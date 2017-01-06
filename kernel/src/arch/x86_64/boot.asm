@@ -6,6 +6,8 @@ bits 32
 start:
     ; Set up our initial stack
     mov esp, stack_top
+    ; Move the multiboot2 info pointer to the first param of the kernel_main function
+    mov edi, ebx
 
     call check_multiboot
     call check_cpuid

@@ -8,6 +8,7 @@
 extern crate rlibc;
 extern crate spin;
 extern crate volatile;
+extern crate multiboot2;
 
 #[macro_use]
 pub mod vga;
@@ -26,12 +27,14 @@ fn get_kernel_end() -> VirtualAddress {
 }
 
 #[no_mangle]
-pub extern fn kernel_main() {
+pub extern fn kernel_main(multiboot_address: usize) {
+    let boot_info = unsafe{ multiboot2::load(multiboot_address) };
+
     vga::init();
 
     println!("Kernel started.");
 
-    arch::mem::init(get_kernel_end());
+    arch::mem::init(boot_info, get_kernel_end());
 
     // TODO: Other initialization code here
 
