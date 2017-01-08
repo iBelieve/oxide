@@ -5,10 +5,12 @@
 #![feature(unique)]
 #![no_std]
 
+#[macro_use]
+extern crate bitflags;
+extern crate multiboot2;
 extern crate rlibc;
 extern crate spin;
 extern crate volatile;
-extern crate multiboot2;
 
 #[macro_use]
 pub mod vga;
@@ -17,6 +19,7 @@ pub mod arch;
 pub mod bitmap;
 
 use arch::mem::VirtualAddress;
+use core::ops::DerefMut;
 
 extern {
     static kernel_end: usize;
@@ -39,6 +42,8 @@ pub extern fn kernel_main(multiboot_address: usize) {
     // TODO: Other initialization code here
 
     println!("Hello, Rust kernel world!");
+
+    arch::mem::test_paging(arch::mem::pmm::ALLOCATOR.lock().deref_mut());
 }
 
 #[lang = "eh_personality"]

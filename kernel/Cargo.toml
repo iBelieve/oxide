@@ -8,7 +8,8 @@ publish = false
 crate-type = ["staticlib"]
 
 [dependencies]
+bitflags = "0.7.0"
+multiboot2 = "*"
 rlibc = "*"
 spin = "*"
 volatile = "*"
-multiboot2 = "*"

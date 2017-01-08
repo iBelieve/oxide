@@ -2,6 +2,7 @@ pub mod paging;
 pub mod pmm;
 
 pub use self::paging::{PhysicalAddress, VirtualAddress};
+pub use self::paging::test_paging;
 
 use multiboot2::BootInformation;
 
