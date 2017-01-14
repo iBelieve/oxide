@@ -1,0 +1,32 @@
+language: cpp
+
+cache:
+  directories:
+    - tools
+    - ~/.cargo
+    - ~/.rustup
+    - ~/.xargo
+
+addons:
+  apt:
+    packages:
+    - nasm
+    - xorriso
+
+install:
+  # Install Rust tools
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y
+  - export PATH=$PATH:~/.cargo/bin
+  - cargo install xargo --force
+  - rustup override add nightly
+  - rustup component add rust-src
+  # Install cross-compiler and tools
+  - ./build_tools.sh
+
+before_script:
+  - cargo --version
+  - rustc --version
+
+script:
+  - make iso
+  - make test

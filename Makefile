@@ -15,6 +15,7 @@ SRC_FILES := $(shell find $(SRC_DIR) -name '*.rs')
 
 # Tools
 MAKE_ISO=tools/bin/grub-mkrescue
+GRUB_FILE=tools/bin/grub-file
 QEMU=qemu-system-x86_64
 CARGO=xargo
 LD=$(PREFIX)/x86_64-elf-ld
@@ -25,12 +26,15 @@ all: osdev.iso
 
 iso: osdev.iso
 
+test: osdev.iso
+
 $(TARGET_DIR)/libkernel.a: Cargo.toml kernel/Cargo.toml $(SRC_FILES)
 	$(CARGO) build --target=$(TARGET) --package kernel
 
 $(TARGET_DIR)/osdev.bin: $(ARCH_DIR)/linker.ld $(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
 	$(LD) --gc-sections --nmagic -T $(ARCH_DIR)/linker.ld -o $(TARGET_DIR)/osdev.bin \
 			$(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
+	$(GRUB_FILE) --is-x86-multiboot2 $(TARGET_DIR)/osdev.bin
 
 $(OUT_DIR)/%.o: $(ARCH_DIR)/%.asm
 	mkdir -p $(shell dirname $@)
@@ -41,6 +45,7 @@ osdev.iso: $(TARGET_DIR)/osdev.bin
 	cp $(TARGET_DIR)/osdev.bin $(TARGET_DIR)/isodir/boot
 	cp data/grub.cfg $(TARGET_DIR)/isodir/boot/grub
 	$(MAKE_ISO) -o osdev.iso $(TARGET_DIR)/isodir
+	test -f osdev.iso || { echo "ISO not created correctly!"; exit 1; }
 
 run: osdev.iso
 	$(QEMU) -cdrom osdev.iso
