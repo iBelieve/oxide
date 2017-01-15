@@ -17,6 +17,8 @@ pub mod vga;
 
 pub mod arch;
 pub mod bitmap;
+pub mod clock;
+pub mod time;
 
 use arch::mem::VirtualAddress;
 use core::ops::DerefMut;
@@ -37,6 +39,7 @@ pub extern fn kernel_main(multiboot_address: usize) {
 
     println!("Kernel started.");
 
+    clock::init();
     arch::mem::init(boot_info, get_kernel_end());
 
     // TODO: Other initialization code here
