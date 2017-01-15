@@ -90,6 +90,8 @@ impl Page {
 }
 
 pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
+    assert_has_not_been_called!("mem::init must be called only once");
+
     pmm::init(boot_info, kernel_end);
     paging::remap_kernel(pmm::ALLOCATOR.lock().deref_mut(), boot_info);
 

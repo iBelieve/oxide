@@ -179,6 +179,8 @@ impl fmt::Write for Writer {
 /***** FUNCTIONS *****/
 
 pub fn init() {
+    assert_has_not_been_called!("vga::init must be called only once");
+
     WRITER.lock().clear();
 }
 

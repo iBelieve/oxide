@@ -5,6 +5,8 @@ use time::DateTime;
 static CURRENT_SECONDS: Mutex<u64> = Mutex::new(0);
 
 pub fn init() {
+    assert_has_not_been_called!("clock::init must be called only once");
+
     pit::init();
 
     let now = cmos::current_datetime();

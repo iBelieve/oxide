@@ -8,6 +8,8 @@
 #[macro_use]
 extern crate bitflags;
 extern crate multiboot2;
+#[macro_use]
+extern crate once;
 extern crate rlibc;
 extern crate spin;
 extern crate volatile;

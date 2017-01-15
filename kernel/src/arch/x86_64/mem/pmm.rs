@@ -64,6 +64,8 @@ impl FrameAllocator for BitmapFrameAllocator {
 }
 
 pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
+    assert_has_not_been_called!("pmm::init must be called only once");
+
     let mut allocator = ALLOCATOR.lock();
 
     let memory_map_tag = boot_info.memory_map_tag()
