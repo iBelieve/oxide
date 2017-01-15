@@ -14,7 +14,7 @@ macro_rules! println {
 
 macro_rules! print {
     ($($arg:tt)*) => ({
-        $crate::vga::print(format_args!($($arg)*));
+        $crate::arch::vga::print(format_args!($($arg)*));
     });
 }
 

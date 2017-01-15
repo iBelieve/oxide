@@ -13,11 +13,9 @@ extern crate spin;
 extern crate volatile;
 
 #[macro_use]
-pub mod vga;
-
 pub mod arch;
+
 pub mod bitmap;
-pub mod clock;
 pub mod time;
 
 use arch::mem::VirtualAddress;
@@ -35,11 +33,11 @@ fn get_kernel_end() -> VirtualAddress {
 pub extern fn kernel_main(multiboot_address: usize) {
     let boot_info = unsafe{ multiboot2::load(multiboot_address) };
 
-    vga::init();
+    arch::vga::init();
 
     println!("Kernel started.");
 
-    clock::init();
+    arch::clock::init();
     arch::mem::init(boot_info, get_kernel_end());
 
     // TODO: Other initialization code here

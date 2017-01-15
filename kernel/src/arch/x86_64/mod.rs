@@ -1,3 +1,6 @@
+#[macro_use]
+pub mod vga;
+
 pub mod clock;
 pub mod cmos;
 pub mod io;
