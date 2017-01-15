@@ -1,9 +1,8 @@
-use core::ops::{Index, IndexMut};
+use arch::mem::pmm::FrameAllocator;
 use core::marker::PhantomData;
-
+use core::ops::{Index, IndexMut};
 use super::ENTRY_COUNT;
 use super::entry::*;
-use arch::x86_64::mem::pmm::FrameAllocator;
 
 pub const P4: *mut Table<Level4> = 0xffffffff_fffff000 as *mut _;
 

@@ -1,8 +1,9 @@
-use core::cmp::min;
-use spin::Mutex;
-use multiboot2::BootInformation;
 use bitmap::{Bitmap, BITS_PER_ITEM};
-use super::paging::{Frame, PhysicalAddress, VirtualAddress, MAX_PAGES};
+use core::cmp::min;
+use multiboot2::BootInformation;
+use spin::Mutex;
+use super::{Frame, PhysicalAddress, VirtualAddress};
+use super::paging::MAX_PAGES;
 
 const PAGES_BITMAP_SIZE: usize = MAX_PAGES/BITS_PER_ITEM;
 const KERNEL_OFFSET: PhysicalAddress = 0x0; // TODO: Update when we move to a higher-half
@@ -29,8 +30,8 @@ impl BitmapFrameAllocator {
         let start_frame = Frame::containing_address(address);
         let end_frame = Frame::containing_address(address + length);
 
-        for frame_number in start_frame.number..(end_frame.number + 1) {
-            self.frame_bitmap.set(frame_number, false);
+        for frame in Frame::range_inclusive(start_frame, end_frame) {
+            self.frame_bitmap.set(frame.number, false);
         }
     }
 
@@ -38,8 +39,8 @@ impl BitmapFrameAllocator {
         let start_frame = Frame::containing_address(address);
         let end_frame = Frame::containing_address(address + length);
 
-        for frame_number in start_frame.number..(end_frame.number + 1) {
-            self.frame_bitmap.set(frame_number, true);
+        for frame in Frame::range_inclusive(start_frame, end_frame) {
+            self.frame_bitmap.set(frame.number, true);
         }
     }
 }

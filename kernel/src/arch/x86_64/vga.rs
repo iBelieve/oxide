@@ -1,9 +1,9 @@
-use core::fmt;
-use core::ptr::Unique;
-use volatile::Volatile;
-use spin::Mutex;
 use arch::io::PortPair;
 use arch::mem::VGA_BUFFER;
+use core::fmt;
+use core::ptr::Unique;
+use spin::Mutex;
+use volatile::Volatile;
 
 /***** MACROS *****/
 

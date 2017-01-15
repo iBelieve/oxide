@@ -6,21 +6,14 @@ SECTIONS {
 
     __start = .;
 
-    .boot : {
-		KEEP(*(.multiboot_header))
+    .rodata ALIGN (4K) : {
+        KEEP(*(.multiboot_header))
+        *(.rodata .rodata.*)
+        . = ALIGN(4K);
     }
 
     .text ALIGN (4K) : {
-		*(.text .text.*)
-	}
-
-	.rodata ALIGN (4K) :
-	{
-		*(.rodata .rodata.*)
-	}
-
-    .data.rel.ro ALIGN (4K) : {
-        *(.data.rel.ro.local*) *(.data.rel.ro .data.rel.ro.*)
+      *(.text .text.*)
     }
 
     .data ALIGN (4K) :
@@ -29,9 +22,24 @@ SECTIONS {
 	}
 
 	.bss ALIGN (4K) : {
-		*(COMMON)
-		*(.bss)
+		*(.bss .bss.*)
 	}
+
+	.got ALIGN (4K) : {
+		*(.got)
+	}
+
+	.got.plt ALIGN (4K) : {
+		*(.got.plt)
+	}
+
+    .data.rel.ro ALIGN(4K) : {
+      *(.data.rel.ro.local*) *(.data.rel.ro .data.rel.ro.*)
+    }
+
+    .gcc_except_table ALIGN(4K) : {
+      *(.gcc_except_table)
+    }
 
 	__end = .;
 }

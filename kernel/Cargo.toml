@@ -13,3 +13,7 @@ multiboot2 = "*"
 rlibc = "*"
 spin = "*"
 volatile = "*"
+
+[dependencies.x86]
+version = "*"
+default-features = false
