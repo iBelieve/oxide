@@ -1,7 +1,7 @@
 use spin::Mutex;
 use time::DateTime;
 use arch::io::PortPair;
-use super::nmi;
+use arch::nmi;
 
 const CURRENT_YEAR: u32 = 2017; // Change this each year!
 

@@ -1,7 +1,6 @@
 use spin::Mutex;
 use time::DateTime;
-use super::cmos;
-use super::pit;
+use arch::{cmos, pit};
 
 static CURRENT_SECONDS: Mutex<u64> = Mutex::new(0);
 

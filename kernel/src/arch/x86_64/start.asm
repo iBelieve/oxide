@@ -1,5 +1,5 @@
 global long_mode_start
-extern kernel_main
+extern kernel_start
 
 section .text
 bits 64
@@ -9,6 +9,6 @@ long_mode_start:
     mov qword [0xb8000], rax
 
     ; TODO: Pass in multiboot structure
-    call kernel_main
+    call kernel_start
 
     hlt

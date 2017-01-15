@@ -4,7 +4,7 @@ SECTIONS {
 	/* TODO: Move to a higher-half kernel (but for x86_64) */
 	. = 1M;
 
-    kernel_start = .;
+    __start = .;
 
     .boot : {
 		KEEP(*(.multiboot_header))
@@ -33,5 +33,5 @@ SECTIONS {
 		*(.bss)
 	}
 
-	kernel_end = .;
+	__end = .;
 }
