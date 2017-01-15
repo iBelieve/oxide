@@ -2,7 +2,7 @@ use core::cmp::min;
 use spin::Mutex;
 use multiboot2::BootInformation;
 use bitmap::{Bitmap, BITS_PER_ITEM};
-use super::paging::{Frame, PhysicalAddress, MAX_PAGES};
+use super::paging::{Frame, PhysicalAddress, VirtualAddress, MAX_PAGES};
 
 const PAGES_BITMAP_SIZE: usize = MAX_PAGES/BITS_PER_ITEM;
 const KERNEL_OFFSET: PhysicalAddress = 0x0; // TODO: Update when we move to a higher-half
@@ -62,7 +62,7 @@ impl FrameAllocator for BitmapFrameAllocator {
    }
 }
 
-pub fn init(boot_info: &BootInformation, kernel_end: PhysicalAddress) {
+pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
     let mut allocator = ALLOCATOR.lock();
 
     let memory_map_tag = boot_info.memory_map_tag()

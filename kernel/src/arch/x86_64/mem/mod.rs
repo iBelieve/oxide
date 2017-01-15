@@ -9,7 +9,7 @@ use multiboot2::BootInformation;
 pub const VGA_BUFFER: usize = 0xb8000;
 
 
-pub fn init(boot_info: &BootInformation, kernel_end: PhysicalAddress) {
+pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
     pmm::init(boot_info, kernel_end);
 
     println!("Memory manager initialized.");
