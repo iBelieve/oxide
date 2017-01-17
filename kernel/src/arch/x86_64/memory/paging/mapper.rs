@@ -1,4 +1,4 @@
-use arch::mem::{VirtualAddress, PhysicalAddress, Frame, Page, PAGE_SIZE};
+use arch::memory::{VirtualAddress, PhysicalAddress, Frame, Page, PAGE_SIZE};
 use core::ptr::Unique;
 use super::{ENTRY_COUNT, FrameAllocator};
 use super::entry::*;

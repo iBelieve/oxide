@@ -1,5 +1,5 @@
 use arch::io::PortPair;
-use arch::mem::VGA_BUFFER;
+use arch::memory::VGA_BUFFER;
 use core::fmt;
 use core::ptr::Unique;
 use spin::Mutex;

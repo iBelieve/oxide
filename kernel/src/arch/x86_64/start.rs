@@ -1,5 +1,5 @@
 use arch::*;
-use arch::mem::VirtualAddress;
+use arch::memory::VirtualAddress;
 use multiboot2;
 use ::kernel_main;
 
@@ -20,7 +20,7 @@ pub extern fn kernel_start(multiboot_address: usize) {
     println!("Kernel started.");
 
     clock::init();
-    mem::init(boot_info, kernel_end);
+    memory::init(boot_info, kernel_end);
 
     // TODO: Other initialization code here
 
