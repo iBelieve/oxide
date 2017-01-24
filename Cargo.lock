@@ -7,8 +7,8 @@ dependencies = [
  "once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "volatile 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "x86 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "volatile 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -51,12 +51,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "volatile"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "x86"
-version = "0.8.0"
+version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -71,5 +71,5 @@ dependencies = [
 "checksum raw-cpuid 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7bc8e963398e6244e1d51c42dd68394f273d39ed8afc9238b74f56041b23dbd3"
 "checksum rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc874b127765f014d792f16763a81245ab80500e2ad921ed4ee9e82481ee08fe"
 "checksum spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "1d16a26e2b789f86aabddbe91cb82ee2e822beb8a59840d631941b625ef77e53"
-"checksum volatile 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a7ce286110f2585da4cb753affdc8b6addbab52d0e104442649237451c53cf92"
-"checksum x86 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "289a79c6ffe63e7948823bc7e6b617856325c752dfec28c4ba50f50a824f55a2"
+"checksum volatile 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1ad41258d7814f441cdab10ceb7faa58a81db5a99098a8c46bd876f8a6010f9c"
+"checksum x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ada1976e1004a0b5999beb7403541af96637e8f439b97d86c8c9abef2e0e7d19"

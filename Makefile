@@ -49,3 +49,6 @@ osdev.iso: $(TARGET_DIR)/osdev.bin
 
 run: osdev.iso
 	$(QEMU) -cdrom osdev.iso
+
+debug: osdev.iso
+	$(QEMU) -cdrom osdev.iso -d int -no-reboot

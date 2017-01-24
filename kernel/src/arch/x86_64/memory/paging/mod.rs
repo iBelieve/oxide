@@ -11,6 +11,7 @@ use arch::memory::pmm::FrameAllocator;
 use core::ops::{Deref, DerefMut};
 use multiboot2::BootInformation;
 use self::temp_page::TemporaryPage;
+use super::KERNEL_OFFSET;
 
 pub const MAX_PAGES: usize = 8388608; // 32 GB of physical memory
 
@@ -132,14 +133,15 @@ pub fn remap_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
                     "sections need to be page aligned");
 
             // println!("mapping section at addr: {:#x}, size: {:#x}",
-                // section.addr, section.size);
+            //     section.addr, section.size);
 
             let flags = EntryFlags::from_elf_section_flags(section);
 
-            let start_frame = Frame::containing_address(section.start_address());
-            let end_frame = Frame::containing_address(section.end_address() - 1);
-            for frame in Frame::range_inclusive(start_frame, end_frame) {
-                mapper.identity_map(frame, flags, allocator);
+            let start_page = Page::containing_address(section.start_address());
+            let end_page = Page::containing_address(section.end_address() - 1);
+            for page in Page::range_inclusive(start_page, end_page) {
+                let frame = Frame::containing_address(page.start_address() - KERNEL_OFFSET);
+                mapper.map_to(page, frame, flags, allocator);
             }
         }
 
@@ -159,7 +161,7 @@ pub fn remap_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
     let old_table = active_table.switch(new_table);
 
     // turn the old p4 page into a guard page
-    let old_p4_page = Page::containing_address(old_table.p4_frame.start_address());
+    let old_p4_page = Page::containing_address(old_table.p4_frame.start_address() + KERNEL_OFFSET);
     active_table.unmap(old_p4_page, allocator);
     println!(" - Guard page at {:#x}", old_p4_page.start_address());
 }

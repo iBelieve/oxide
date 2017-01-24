@@ -1,11 +1,14 @@
 global start
+global stack_top
 extern long_mode_start
+
+KERNEL_OFFSET equ 0xFFFFFF0000000000
 
 section .text
 bits 32
 start:
     ; Set up our initial stack
-    mov esp, stack_top
+    mov esp, stack_top - KERNEL_OFFSET
     ; Move the multiboot2 info pointer to the first param of the kernel_main function
     mov edi, ebx
 
@@ -16,7 +19,7 @@ start:
     call enable_paging
 
     ; load the 64-bit GDT
-    lgdt [gdt64.pointer]
+    lgdt [gdt64.pointer - KERNEL_OFFSET]
 
     ; update selectors
     mov ax, gdt64.data
@@ -24,7 +27,7 @@ start:
     mov ds, ax
     mov es, ax
 
-    jmp gdt64.code:long_mode_start
+    jmp gdt64.code:long_mode_start - KERNEL_OFFSET
 
     ; print `OK` to screen
     mov dword [0xb8000], 0x2f4b2f4f
@@ -96,20 +99,21 @@ check_long_mode:
 
 
 set_up_page_tables:
-    ; map first P4 entry to P3 table
-    mov eax, p3_table
+    ; map first and second-to-last P4 entry to P3 table
+    mov eax, p3_table - KERNEL_OFFSET
     or eax, 0b11 ; present + writable
-    mov [p4_table], eax
+    mov [p4_table - KERNEL_OFFSET], eax
+    mov [p4_table + 510 * 8 - KERNEL_OFFSET], eax
 
     ; map first P3 entry to P2 table
-    mov eax, p2_table
+    mov eax, p2_table - KERNEL_OFFSET
     or eax, 0b11 ; present + writable
-    mov [p3_table], eax
+    mov [p3_table - KERNEL_OFFSET], eax
 
     ; Map the last P4 entry back to itself
-    mov eax, p4_table
+    mov eax, p4_table - KERNEL_OFFSET
     or eax, 0b11 ; present + writable
-    mov [p4_table + 511 * 8], eax
+    mov [p4_table + 511 * 8 - KERNEL_OFFSET], eax
 
     ; map each P2 entry to a huge 2MiB page
     mov ecx, 0         ; counter variable
@@ -119,7 +123,7 @@ set_up_page_tables:
     mov eax, 0x200000  ; 2MiB
     mul ecx            ; start address of ecx-th page
     or eax, 0b10000011 ; present + writable + huge
-    mov [p2_table + ecx * 8], eax ; map ecx-th entry
+    mov [p2_table + ecx * 8 - KERNEL_OFFSET], eax ; map ecx-th entry
 
     inc ecx            ; increase counter
     cmp ecx, 512       ; if counter == 512, the whole P2 table is mapped
@@ -130,7 +134,7 @@ set_up_page_tables:
 
 enable_paging:
     ; load P4 to cr3 register (cpu uses this to access the P4 table)
-    mov eax, p4_table
+    mov eax, p4_table - KERNEL_OFFSET
     mov cr3, eax
 
     ; enable PAE-flag in cr4 (Physical Address Extension)
