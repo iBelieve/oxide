@@ -2,13 +2,23 @@
 name = "kernel"
 version = "0.1.0"
 dependencies = [
+ "alloc_kernel 0.1.0",
  "bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "multiboot2 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "volatile 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "alloc_kernel"
+version = "0.1.0"
+dependencies = [
+ "linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -19,6 +29,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "bitflags"
 version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "linked_list_allocator"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -66,6 +81,7 @@ dependencies = [
 [metadata]
 "checksum bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8dead7461c1127cf637931a1e50934eb6eee8bff2f74433ac7909e9afcee04a3"
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
+"checksum linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3504327a5901bc4fb25ca095d67a6d3f48be4233dc08230f197b313736a13384"
 "checksum multiboot2 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "88aedb52b616203e987bf9cd0c2779e281eefcfa23bd23dc9734f2dcf54079ad"
 "checksum once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1ae5868dd493edd93941c182240a2c019dfe84c7d2de51d4659da32e58688ce9"
 "checksum raw-cpuid 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7bc8e963398e6244e1d51c42dd68394f273d39ed8afc9238b74f56041b23dbd3"

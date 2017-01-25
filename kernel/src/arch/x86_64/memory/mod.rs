@@ -1,3 +1,4 @@
+pub mod heap;
 pub mod paging;
 pub mod pmm;
 
@@ -15,6 +16,9 @@ pub const RECURSIVE_PAGE_OFFSET: usize = (-(PML4_SIZE as isize)) as usize;
 
 /// Offset of kernel
 pub const KERNEL_OFFSET: usize = RECURSIVE_PAGE_OFFSET - KERNEL_SIZE;
+
+pub const KERNEL_HEAP_START: usize = KERNEL_OFFSET + KERNEL_SIZE/2;
+pub const KERNEL_HEAP_SIZE: usize = 128 * 1024 * 1024; // 128 MB
 
 pub const VGA_BUFFER: usize = 0xb8000;
 pub const PAGE_SIZE: usize = 0x1000;
@@ -124,11 +128,32 @@ impl Iterator for PageIter {
     }
  }
 
-pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
+pub fn init(boot_info: &BootInformation) {
     assert_has_not_been_called!("memory::init must be called only once");
 
+    // let memory_map_tag = boot_info.memory_map_tag().expect(
+    //     "Memory map tag required");
+    let elf_sections_tag = boot_info.elf_sections_tag().expect(
+        "Elf sections tag required");
+
+    let kernel_start = elf_sections_tag.sections()
+        .filter(|s| s.is_allocated()).map(|s| s.addr).min().unwrap() as usize;
+    let kernel_end = elf_sections_tag.sections()
+        .filter(|s| s.is_allocated()).map(|s| s.addr + s.size).max()
+        .unwrap() as usize;
+
+    println!("Kernel start: {:#x}, kernel end: {:#x}",
+             kernel_start,
+             kernel_end);
+    println!("Multiboot start: {:#x}, multiboot end: {:#x}",
+             boot_info.start_address(),
+             boot_info.end_address());
+
     pmm::init(boot_info, kernel_end - KERNEL_OFFSET);
-    paging::remap_kernel(pmm::ALLOCATOR.lock().deref_mut(), boot_info);
+
+    let mut active_page_table = paging::init(pmm::ALLOCATOR.lock().deref_mut(), boot_info);
+
+    heap::init(&mut active_page_table, pmm::ALLOCATOR.lock().deref_mut());
 
     println!("Memory manager initialized.");
 }

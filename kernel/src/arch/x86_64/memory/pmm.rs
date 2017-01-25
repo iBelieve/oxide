@@ -27,7 +27,7 @@ impl BitmapFrameAllocator {
 
     pub fn mark_area_as_available(&mut self, address: PhysicalAddress, length: usize) {
         let start_frame = Frame::containing_address(address);
-        let end_frame = Frame::containing_address(address + length);
+        let end_frame = Frame::containing_address(address + length - 1);
 
         for frame in Frame::range_inclusive(start_frame, end_frame) {
             self.frame_bitmap.set(frame.number, false);
@@ -36,7 +36,7 @@ impl BitmapFrameAllocator {
 
     pub fn mark_area_in_use(&mut self, address: PhysicalAddress, length: usize) {
         let start_frame = Frame::containing_address(address);
-        let end_frame = Frame::containing_address(address + length);
+        let end_frame = Frame::containing_address(address + length - 1);
 
         for frame in Frame::range_inclusive(start_frame, end_frame) {
             self.frame_bitmap.set(frame.number, true);
@@ -71,6 +71,9 @@ pub fn init(boot_info: &BootInformation, kernel_end: PhysicalAddress) {
         .expect("Memory map tag required");
 
     for area in memory_map_tag.memory_areas() {
+        println!("region is available: {:#x}, size: {:#x}",
+                 area.base_addr, area.length);
+
         allocator.mark_area_as_available(area.base_addr as usize, area.length as usize);
     }
 

@@ -108,7 +108,7 @@ impl InactivePageTable {
     }
 }
 
-pub fn remap_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
+pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTable
     where A: FrameAllocator
 {
     let mut temporary_page = TemporaryPage::new(Page { number: 0xcafebabe },
@@ -164,6 +164,8 @@ pub fn remap_kernel<A>(allocator: &mut A, boot_info: &BootInformation)
     let old_p4_page = Page::containing_address(old_table.p4_frame.start_address() + KERNEL_OFFSET);
     active_table.unmap(old_p4_page, allocator);
     println!(" - Guard page at {:#x}", old_p4_page.start_address());
+
+    active_table
 }
 
 /***** TESTING *****/

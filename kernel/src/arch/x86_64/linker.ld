@@ -7,8 +7,6 @@ SECTIONS {
 	/* TODO: Move to a higher-half kernel (but for x86_64) */
 	. = 1M + KERNEL_OFFSET;
 
-    __start = .;
-
     .rodata ALIGN (4K) : AT (ADDR (.rodata) - KERNEL_OFFSET) {
         KEEP(*(.multiboot_header))
         *(.rodata .rodata.*)
@@ -41,6 +39,4 @@ SECTIONS {
     .gcc_except_table ALIGN(4K) : AT (ADDR (.gcc_except_table) - KERNEL_OFFSET) {
       *(.gcc_except_table)
     }
-
-	__end = .;
 }

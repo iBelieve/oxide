@@ -1,5 +1,5 @@
 [workspace]
-members = ["kernel"]
+members = ["kernel", "alloc_kernel"]
 
 [profile.dev]
 panic = "abort"

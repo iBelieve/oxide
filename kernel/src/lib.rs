@@ -3,6 +3,8 @@
 #![feature(fixed_size_array)]
 #![feature(lang_items)]
 #![feature(unique)]
+#![feature(collections)]
+
 #![no_std]
 
 #[macro_use]
@@ -14,6 +16,10 @@ extern crate rlibc;
 extern crate spin;
 extern crate volatile;
 extern crate x86;
+#[macro_use]
+extern crate alloc_kernel;
+#[macro_use]
+extern crate collections;
 
 #[macro_use]
 pub mod arch;

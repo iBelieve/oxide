@@ -1,16 +1,10 @@
 use arch::*;
-use arch::memory::VirtualAddress;
 use multiboot2;
 use ::kernel_main;
-
-extern {
-    static mut __end: u8;
-}
 
 #[no_mangle]
 pub extern fn kernel_start(multiboot_address: usize) {
     let boot_info = unsafe { multiboot2::load(multiboot_address) };
-    let kernel_end = unsafe { &__end as *const u8 as VirtualAddress };
 
     enable_nxe_bit();
     enable_write_protect_bit();
@@ -20,7 +14,7 @@ pub extern fn kernel_start(multiboot_address: usize) {
     println!("Kernel started.");
 
     clock::init();
-    memory::init(boot_info, kernel_end);
+    memory::init(boot_info);
 
     // TODO: Other initialization code here
 

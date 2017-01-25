@@ -1,14 +1,12 @@
 [package]
-name = "kernel"
-version = "0.1.0"
 authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
+name = "kernel"
 publish = false
-
-[lib]
-crate-type = ["staticlib"]
+version = "0.1.0"
 
 [dependencies]
 bitflags = "0.7.0"
+linked_list_allocator = "0.2.3"
 multiboot2 = "*"
 once = "0.3"
 rlibc = "*"
@@ -16,5 +14,11 @@ spin = "*"
 volatile = "*"
 
 [dependencies.x86]
-version = "*"
 default-features = false
+version = "*"
+
+[dependencies.alloc_kernel]
+path = "../alloc_kernel"
+
+[lib]
+crate-type = ["staticlib"]
