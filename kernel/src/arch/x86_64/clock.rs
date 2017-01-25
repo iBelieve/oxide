@@ -1,6 +1,5 @@
 use arch::{cmos, pit};
 use spin::Mutex;
-use time::DateTime;
 
 static CURRENT_SECONDS: Mutex<u64> = Mutex::new(0);
 
@@ -23,16 +22,13 @@ pub fn init() {
     }
 }
 
-pub fn tick() {
-    let mut seconds = CURRENT_SECONDS.lock();
-    *seconds += 1;
-}
+// TODO: Hook up to our timer
+// pub fn tick() {
+//     let mut seconds = CURRENT_SECONDS.lock();
+//     *seconds += 1;
+// }
 
 pub fn current_seconds() -> u64 {
     let seconds = CURRENT_SECONDS.lock();
     *seconds
-}
-
-pub fn current_datetime() -> DateTime {
-    DateTime::from_seconds_since_epoc(current_seconds())
 }

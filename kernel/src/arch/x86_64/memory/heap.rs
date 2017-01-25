@@ -1,11 +1,7 @@
 use super::paging::{self, ActivePageTable};
-use super::{Page, KERNEL_OFFSET, KERNEL_SIZE};
+use super::{Page, KERNEL_HEAP_START, KERNEL_HEAP_SIZE};
 use super::pmm::FrameAllocator;
 use alloc_kernel;
-
-
-pub const KERNEL_HEAP_START: usize = KERNEL_OFFSET + KERNEL_SIZE/2;
-pub const KERNEL_HEAP_SIZE: usize = 128 * 1024; // 128 KiB TODO: Increase to 128 MB
 
 pub fn init<A>(active_table: &mut ActivePageTable, frame_allocator: &mut A)
         where A: FrameAllocator {

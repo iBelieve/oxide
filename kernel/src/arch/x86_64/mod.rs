@@ -1,3 +1,5 @@
+pub use self::start::kernel_start;
+
 #[macro_use]
 pub mod vga;
 

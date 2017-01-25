@@ -11,6 +11,12 @@ pub struct DateTime {
 }
 
 impl DateTime {
+    pub fn now() -> DateTime {
+        use arch::clock::current_seconds;
+
+        DateTime::from_seconds_since_epoc(current_seconds())
+    }
+
     // Based on http://stackoverflow.com/a/8020212/1917313
     pub fn is_leap_year(&self) -> bool {
         (self.year % 4 == 0 && self.year % 100 != 0) || (self.year % 400 == 0)

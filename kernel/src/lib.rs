@@ -1,10 +1,4 @@
-#![feature(asm)]
-#![feature(const_fn)]
-#![feature(fixed_size_array)]
-#![feature(lang_items)]
-#![feature(unique)]
-#![feature(collections)]
-
+#![feature(asm, const_fn, fixed_size_array, lang_items, unique, collections)]
 #![no_std]
 
 #[macro_use]
@@ -21,29 +15,18 @@ extern crate alloc_kernel;
 #[macro_use]
 extern crate collections;
 
-#[macro_use]
-pub mod arch;
 
-pub mod bitmap;
-pub mod time;
+pub use arch::kernel_start;
+pub use runtime::*;
+
+#[macro_use]
+mod arch;
+
+mod bitmap;
+mod time;
+mod runtime;
+
 
 pub extern fn kernel_main() {
     println!("Hello, Rust kernel world!");
-}
-
-#[lang = "eh_personality"]
-extern fn eh_personality() {}
-
-#[lang = "panic_fmt"]
-#[no_mangle]
-pub extern fn panic_fmt(fmt: core::fmt::Arguments, file: &'static str, line: u32) -> ! {
-    println!("\n\nPANIC in {} at line {}:", file, line);
-    println!("    {}", fmt);
-    loop {}
-}
-
-#[allow(non_snake_case)]
-#[no_mangle]
-pub extern fn _Unwind_Resume() -> ! {
-    loop {}
 }
