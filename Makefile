@@ -19,6 +19,7 @@ GRUB_FILE=tools/bin/grub-file
 QEMU=qemu-system-x86_64
 CARGO=xargo
 LD=$(PREFIX)/x86_64-elf-ld
+QEMU_ARGS=-m size=256
 
 .PHONY: all run clean
 
@@ -48,7 +49,7 @@ osdev.iso: $(TARGET_DIR)/osdev.bin
 	@test -f osdev.iso || { echo "ISO not created correctly!"; exit 1; }
 
 run: osdev.iso
-	$(QEMU) -cdrom osdev.iso
+	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS)
 
 debug: osdev.iso
-	$(QEMU) -cdrom osdev.iso -d int -no-reboot
+	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -d int -no-reboot

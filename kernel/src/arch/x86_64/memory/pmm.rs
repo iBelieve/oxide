@@ -29,6 +29,10 @@ impl BitmapFrameAllocator {
         let start_frame = Frame::containing_address(address);
         let end_frame = Frame::containing_address(address + length - 1);
 
+        if self.next_free_frame > start_frame.number {
+            self.next_free_frame = start_frame.number;
+        }
+
         for frame in Frame::range_inclusive(start_frame, end_frame) {
             self.frame_bitmap.set(frame.number, false);
         }
@@ -37,6 +41,9 @@ impl BitmapFrameAllocator {
     pub fn mark_area_in_use(&mut self, address: PhysicalAddress, length: usize) {
         let start_frame = Frame::containing_address(address);
         let end_frame = Frame::containing_address(address + length - 1);
+        if self.next_free_frame >= start_frame.number && self.next_free_frame <= end_frame.number {
+            self.next_free_frame = end_frame.number + 1;
+        }
 
         for frame in Frame::range_inclusive(start_frame, end_frame) {
             self.frame_bitmap.set(frame.number, true);
@@ -46,14 +53,22 @@ impl BitmapFrameAllocator {
 
 impl FrameAllocator for BitmapFrameAllocator {
     fn allocate_frame(&mut self) -> Option<Frame> {
-       if let Some(number) = self.frame_bitmap.first_unset(self.next_free_frame) {
-           self.frame_bitmap.set(number, true);
-           self.next_free_frame = number + 1;
+        let free_frame = {
+            if self.frame_bitmap.get(self.next_free_frame) == false {
+                Some(self.next_free_frame)
+            } else {
+                self.frame_bitmap.first_unset(self.next_free_frame)
+            }
+        };
 
-           Some(Frame { number: number })
-       } else {
-           None
-       }
+        if let Some(number) = free_frame {
+            self.frame_bitmap.set(number, true);
+            self.next_free_frame = number + 1;
+
+            Some(Frame { number: number })
+        } else {
+            None
+        }
    }
 
    fn deallocate_frame(&mut self, frame: Frame) {
