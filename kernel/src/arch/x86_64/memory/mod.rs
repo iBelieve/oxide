@@ -8,12 +8,13 @@ pub type PhysicalAddress = usize;
 pub type VirtualAddress = usize;
 
 pub const PML4_SIZE: usize = 0x0000_0080_0000_0000;
+pub const KERNEL_SIZE: usize = PML4_SIZE;
 
 /// Offset of recursive paging
 pub const RECURSIVE_PAGE_OFFSET: usize = (-(PML4_SIZE as isize)) as usize;
 
 /// Offset of kernel
-pub const KERNEL_OFFSET: usize = RECURSIVE_PAGE_OFFSET - PML4_SIZE;
+pub const KERNEL_OFFSET: usize = RECURSIVE_PAGE_OFFSET - KERNEL_SIZE;
 
 pub const VGA_BUFFER: usize = 0xb8000;
 pub const PAGE_SIZE: usize = 0x1000;

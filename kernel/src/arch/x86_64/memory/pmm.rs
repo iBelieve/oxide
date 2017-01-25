@@ -2,11 +2,10 @@ use bitmap::{Bitmap, BITS_PER_ITEM};
 use core::cmp::min;
 use multiboot2::BootInformation;
 use spin::Mutex;
-use super::{Frame, PhysicalAddress, VirtualAddress};
-use super::paging::MAX_PAGES;
+use super::{Frame, PhysicalAddress};
+use super::paging::MAX_FRAMES;
 
-const PAGES_BITMAP_SIZE: usize = MAX_PAGES/BITS_PER_ITEM;
-const KERNEL_OFFSET: PhysicalAddress = 0x0; // TODO: Update when we move to a higher-half
+const FRAME_BITMAP_SIZE: usize = MAX_FRAMES/BITS_PER_ITEM;
 
 pub static ALLOCATOR: Mutex<BitmapFrameAllocator> = Mutex::new(BitmapFrameAllocator::new());
 
@@ -16,13 +15,13 @@ pub trait FrameAllocator {
 }
 
 pub struct BitmapFrameAllocator {
-    frame_bitmap: Bitmap<[u64; PAGES_BITMAP_SIZE]>,
+    frame_bitmap: Bitmap<[u64; FRAME_BITMAP_SIZE]>,
     next_free_frame: usize
 }
 
 impl BitmapFrameAllocator {
     pub const fn new() -> BitmapFrameAllocator {
-        BitmapFrameAllocator { frame_bitmap: Bitmap::new([u64::max_value(); PAGES_BITMAP_SIZE]),
+        BitmapFrameAllocator { frame_bitmap: Bitmap::new([u64::max_value(); FRAME_BITMAP_SIZE]),
                                next_free_frame: 0 }
     }
 
@@ -63,7 +62,7 @@ impl FrameAllocator for BitmapFrameAllocator {
    }
 }
 
-pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
+pub fn init(boot_info: &BootInformation, kernel_end: PhysicalAddress) {
     assert_has_not_been_called!("pmm::init must be called only once");
 
     let mut allocator = ALLOCATOR.lock();
@@ -75,5 +74,5 @@ pub fn init(boot_info: &BootInformation, kernel_end: VirtualAddress) {
         allocator.mark_area_as_available(area.base_addr as usize, area.length as usize);
     }
 
-    allocator.mark_area_in_use(0x0, kernel_end - KERNEL_OFFSET);
+    allocator.mark_area_in_use(0x0, kernel_end);
 }

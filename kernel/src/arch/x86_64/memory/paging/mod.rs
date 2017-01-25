@@ -13,7 +13,7 @@ use multiboot2::BootInformation;
 use self::temp_page::TemporaryPage;
 use super::KERNEL_OFFSET;
 
-pub const MAX_PAGES: usize = 8388608; // 32 GB of physical memory
+pub const MAX_FRAMES: usize = 8388608; // 32 GB of physical memory
 
 const ENTRY_COUNT: usize = 512;
 
