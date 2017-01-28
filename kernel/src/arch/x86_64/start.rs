@@ -19,18 +19,7 @@ pub extern "C" fn kernel_start(multiboot_address: usize) {
 
     // TODO: Other initialization code here
 
-    divide_by_zero();
-
-    println!("It did not crash!");
-    loop {}
-
     kernel_main();
-}
-
-fn divide_by_zero() {
-    unsafe {
-        asm!("mov dx, 0; div dx" ::: "ax", "dx" : "volatile", "intel")
-    }
 }
 
 fn enable_nxe_bit() {

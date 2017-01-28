@@ -86,7 +86,7 @@ pub fn init(boot_info: &BootInformation, kernel_end: PhysicalAddress) {
         .expect("Memory map tag required");
 
     for area in memory_map_tag.memory_areas() {
-        println!("region is available: {:#x}, size: {:#x}",
+        println!("Available memory region: {:#x}, size: {:#x}",
                  area.base_addr, area.length);
 
         allocator.mark_area_as_available(area.base_addr as usize, area.length as usize);

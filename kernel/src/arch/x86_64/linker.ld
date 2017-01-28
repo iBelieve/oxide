@@ -24,6 +24,10 @@ SECTIONS {
 		*(.bss .bss.*)
 	}
 
+	.tbss ALIGN (4K) : AT (ADDR (.tbss) - KERNEL_OFFSET) {
+		*(.tbss .tbss.*)
+	}
+
 	.got ALIGN (4K) : AT (ADDR (.got) - KERNEL_OFFSET) {
 		*(.got)
 	}

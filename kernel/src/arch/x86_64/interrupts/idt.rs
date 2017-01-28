@@ -16,7 +16,6 @@ impl Idt {
         -> &mut EntryOptions
     {
         self.0[entry as usize] = Entry::new(segmentation::cs(), handler);
-        println!("Set handler {}: {}", entry, self.0[entry as usize]);
         &mut self.0[entry as usize].options
     }
 
@@ -47,7 +46,6 @@ pub struct Entry {
 impl Entry {
     fn new(gdt_selector: SegmentSelector, handler: HandlerFunc) -> Self {
         let pointer = handler as u64;
-        println!("{:#x}", pointer);
         Entry {
             gdt_selector: gdt_selector,
             pointer_low: pointer as u16,

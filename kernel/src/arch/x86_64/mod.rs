@@ -11,3 +11,4 @@ pub mod memory;
 pub mod nmi;
 pub mod pit;
 pub mod start;
+pub mod tasking;

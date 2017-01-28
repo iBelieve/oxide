@@ -36,7 +36,7 @@ impl DerefMut for ActivePageTable {
 }
 
 impl ActivePageTable {
-    unsafe fn new() -> ActivePageTable {
+    pub unsafe fn new() -> ActivePageTable {
         ActivePageTable {
             mapper: Mapper::new(),
         }
@@ -129,11 +129,11 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
                 continue;
             }
 
-            assert!(section.addr as usize % PAGE_SIZE == 0,
-                    "sections need to be page aligned");
+            println!("Mapping section at address: {:#x}, size: {:#x}",
+                section.addr, section.size);
 
-            // println!("mapping section at addr: {:#x}, size: {:#x}",
-            //     section.addr, section.size);
+            assert!(section.addr as usize % PAGE_SIZE == 0,
+                    "Section needs to be page-aligned!");
 
             let flags = EntryFlags::from_elf_section_flags(section);
 

@@ -24,6 +24,8 @@ pub fn init() {
     gdt.load();
 
     IDT.load();
+
+    println!("Interrupts initialized");
 }
 
 extern "C" fn divide_by_zero_handler() -> ! {

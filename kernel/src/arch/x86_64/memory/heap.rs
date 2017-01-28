@@ -11,7 +11,6 @@ pub fn init<A>(active_table: &mut ActivePageTable, frame_allocator: &mut A)
     let heap_end_page = Page::containing_address(KERNEL_HEAP_START + KERNEL_HEAP_SIZE - 1);
 
     for page in Page::range_inclusive(heap_start_page, heap_end_page) {
-        // println!("Mapping page {:#x}", page.number);
         active_table.map(page, paging::PRESENT | paging::GLOBAL | paging::WRITABLE | paging::NO_EXECUTE, frame_allocator);
     }
 
