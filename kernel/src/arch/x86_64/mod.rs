@@ -5,6 +5,7 @@ pub mod vga;
 
 pub mod clock;
 pub mod cmos;
+pub mod interrupts;
 pub mod io;
 pub mod memory;
 pub mod nmi;

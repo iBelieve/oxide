@@ -14,6 +14,9 @@ extern crate x86;
 extern crate alloc_kernel;
 #[macro_use]
 extern crate collections;
+extern crate bit_field;
+#[macro_use]
+extern crate lazy_static;
 
 
 pub use arch::kernel_start;
@@ -27,6 +30,6 @@ mod time;
 mod runtime;
 
 
-pub extern fn kernel_main() {
+fn kernel_main() {
     println!("Hello, Rust kernel world!");
 }

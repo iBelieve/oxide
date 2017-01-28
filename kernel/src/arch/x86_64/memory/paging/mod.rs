@@ -141,6 +141,7 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
             let end_page = Page::containing_address(section.end_address() - 1);
             for page in Page::range_inclusive(start_page, end_page) {
                 let frame = Frame::containing_address(page.start_address() - KERNEL_OFFSET);
+                // mapper.identity_map(frame.clone(), flags, allocator);
                 mapper.map_to(page, frame, flags, allocator);
             }
         }

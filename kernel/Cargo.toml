@@ -5,6 +5,7 @@ publish = false
 version = "0.1.0"
 
 [dependencies]
+bit_field = "0.7.0"
 bitflags = "0.7.0"
 linked_list_allocator = "0.2.3"
 multiboot2 = "*"
@@ -13,12 +14,16 @@ rlibc = "*"
 spin = "*"
 volatile = "*"
 
+[dependencies.alloc_kernel]
+path = "../alloc_kernel"
+
 [dependencies.x86]
 default-features = false
 version = "*"
 
-[dependencies.alloc_kernel]
-path = "../alloc_kernel"
+[dependencies.lazy_static]
+version = "0.2.1"
+features = ["spin_no_std"]
 
 [lib]
 crate-type = ["staticlib"]
