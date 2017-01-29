@@ -1,5 +1,5 @@
 #![feature(asm, const_fn, fixed_size_array, lang_items, unique, collections, alloc,
-           box_syntax, drop_types_in_const, naked_functions, thread_local)]
+           box_syntax, drop_types_in_const, naked_functions, thread_local, core_intrinsics)]
 #![no_std]
 
 #[macro_use]
