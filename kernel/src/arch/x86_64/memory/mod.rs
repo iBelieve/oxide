@@ -1,9 +1,13 @@
+use core::ops::Add;
+use multiboot2::BootInformation;
+use self::frame_allocator::AreaFrameAllocator;
+
+pub use self::stack_allocator::Stack;
+
 pub mod heap;
 pub mod paging;
-pub mod pmm;
-
-use core::ops::DerefMut;
-use multiboot2::BootInformation;
+pub mod frame_allocator;
+pub mod stack_allocator;
 
 pub type PhysicalAddress = usize;
 pub type VirtualAddress = usize;
@@ -109,7 +113,16 @@ impl Page {
     }
 }
 
-struct PageIter {
+impl Add<usize> for Page {
+    type Output = Page;
+
+    fn add(self, rhs: usize) -> Page {
+        Page { number: self.number + rhs }
+    }
+}
+
+#[derive(Clone)]
+pub struct PageIter {
     start: Page,
     end: Page,
 }
@@ -126,13 +139,29 @@ impl Iterator for PageIter {
             None
         }
     }
- }
+}
 
-pub fn init(boot_info: &BootInformation) {
+pub struct MemoryController {
+    active_table: paging::ActivePageTable,
+    frame_allocator: frame_allocator::AreaFrameAllocator,
+    stack_allocator: stack_allocator::StackAllocator,
+}
+
+impl MemoryController {
+    pub fn alloc_stack(&mut self, size_in_pages: usize) -> Option<Stack> {
+        let &mut MemoryController { ref mut active_table,
+                                    ref mut frame_allocator,
+                                    ref mut stack_allocator } = self;
+        stack_allocator.alloc_stack(active_table, frame_allocator,
+                                    size_in_pages)
+    }
+}
+
+pub fn init(boot_info: &BootInformation) -> MemoryController {
     assert_has_not_been_called!("memory::init must be called only once");
 
-    // let memory_map_tag = boot_info.memory_map_tag().expect(
-    //     "Memory map tag required");
+    let memory_map_tag = boot_info.memory_map_tag().expect(
+        "Memory map tag required");
     let elf_sections_tag = boot_info.elf_sections_tag().expect(
         "Elf sections tag required");
 
@@ -141,19 +170,38 @@ pub fn init(boot_info: &BootInformation) {
     let kernel_end = elf_sections_tag.sections()
         .filter(|s| s.is_allocated()).map(|s| s.addr + s.size).max()
         .unwrap() as usize;
+    let multiboot_start = boot_info.start_address();
+    let multiboot_end = boot_info.end_address();
 
     println!("Kernel start: {:#x}, kernel end: {:#x}",
              kernel_start,
              kernel_end);
     println!("Multiboot start: {:#x}, multiboot end: {:#x}",
-             boot_info.start_address(),
-             boot_info.end_address());
+             multiboot_start,
+             multiboot_end);
 
-    pmm::init(boot_info, kernel_end - KERNEL_OFFSET);
+    let mut frame_allocator = AreaFrameAllocator::new(
+            kernel_start as usize, kernel_end as usize, multiboot_start,
+            multiboot_end, memory_map_tag.memory_areas());
 
-    let mut active_page_table = paging::init(pmm::ALLOCATOR.lock().deref_mut(), boot_info);
+    let mut active_page_table = paging::init(&mut frame_allocator, boot_info);
 
-    heap::init(&mut active_page_table, pmm::ALLOCATOR.lock().deref_mut());
+    let heap_end_page = heap::init(&mut active_page_table,
+                                   &mut frame_allocator);
+
+    let stack_allocator = {
+        let stack_alloc_start = heap_end_page + 1;
+        let stack_alloc_end = stack_alloc_start + 100;
+        let stack_alloc_range = Page::range_inclusive(stack_alloc_start,
+                                                      stack_alloc_end);
+        stack_allocator::StackAllocator::new(stack_alloc_range)
+    };
 
     println!("Memory manager initialized.");
+
+    MemoryController {
+        active_table: active_page_table,
+        frame_allocator: frame_allocator,
+        stack_allocator: stack_allocator,
+    }
 }

@@ -14,8 +14,10 @@ pub extern "C" fn kernel_start(multiboot_address: usize) {
     println!("Kernel started.");
 
     clock::init();
-    memory::init(boot_info);
-    interrupts::init();
+
+    let mut memory_controller = memory::init(boot_info);
+
+    interrupts::init(&mut memory_controller);
 
     // TODO: Other initialization code here
 

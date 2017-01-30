@@ -1,5 +1,5 @@
 use arch::memory::{VirtualAddress, Frame, Page};
-use arch::memory::pmm::FrameAllocator;
+use arch::memory::frame_allocator::FrameAllocator;
 use super::{ActivePageTable};
 use super::table::{Table, Level1};
 

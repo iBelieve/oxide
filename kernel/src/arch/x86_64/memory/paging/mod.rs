@@ -7,7 +7,7 @@ pub use self::entry::*;
 pub use self::mapper::Mapper;
 
 use arch::memory::{Frame, Page, PAGE_SIZE, VGA_BUFFER};
-use arch::memory::pmm::FrameAllocator;
+use arch::memory::frame_allocator::FrameAllocator;
 use core::ops::{Deref, DerefMut};
 use multiboot2::BootInformation;
 use self::temp_page::TemporaryPage;

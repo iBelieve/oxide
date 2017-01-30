@@ -1,7 +1,10 @@
 use spin::Once;
+use arch::memory::MemoryController;
+use x86::bits64::task::TaskStateSegment;
 
 mod idt;
 mod gdt;
+const DOUBLE_FAULT_IST_INDEX: usize = 0;
 
 macro_rules! save_scratch_registers {
     () => {
@@ -87,6 +90,7 @@ bitflags! {
     }
 }
 
+static TSS: Once<TaskStateSegment> = Once::new();
 static GDT: Once<gdt::Gdt> = Once::new();
 
 lazy_static! {
@@ -96,6 +100,8 @@ lazy_static! {
         idt.set_handler(0, handler!(divide_by_zero_handler));
         idt.set_handler(3, handler!(breakpoint_handler));
         idt.set_handler(6, handler!(invalid_opcode_handler));
+        idt.set_handler(8, handler_with_error_code!(double_fault_handler))
+                .set_stack_index(DOUBLE_FAULT_IST_INDEX as u16);
         idt.set_handler(14, handler_with_error_code!(page_fault_handler));
 
         idt
@@ -112,13 +118,34 @@ struct ExceptionStackFrame {
     stack_segment: u64,
 }
 
-pub fn init() {
+pub fn init(memory_controller: &mut MemoryController) {
+    use x86::shared::segmentation::{SegmentSelector, set_cs};
+    use x86::shared::task::load_tr;
+
+    let double_fault_stack = memory_controller.alloc_stack(1)
+        .expect("Unable to allocate double fault stack!");
+
+    let tss = TSS.call_once(|| {
+        let mut tss = TaskStateSegment::new();
+        tss.ist[DOUBLE_FAULT_IST_INDEX] = double_fault_stack.top() as u64;
+        tss
+    });
+
+    let mut code_selector = SegmentSelector::empty();
+    let mut tss_selector = SegmentSelector::empty();
+
     let gdt = GDT.call_once(|| {
         let mut gdt = gdt::Gdt::new();
-        gdt.add_entry(gdt::Descriptor::kernel_code_segment());
+        code_selector = gdt.add_entry(gdt::Descriptor::kernel_code_segment());
+        tss_selector = gdt.add_entry(gdt::Descriptor::tss_segment(&tss));
         gdt
     });
     gdt.load();
+
+    unsafe {
+        set_cs(code_selector);
+        load_tr(tss_selector);
+    }
 
     IDT.load();
 
@@ -131,9 +158,21 @@ extern "C" fn divide_by_zero_handler(stack_frame: &ExceptionStackFrame) {
     loop {}
 }
 
+extern "C" fn breakpoint_handler(stack_frame: &ExceptionStackFrame) {
+    println!("\nEXCEPTION: BREAKPOINT at {:#x}\n\n{:#?}",
+            stack_frame.instruction_pointer, stack_frame);
+}
+
 extern "C" fn invalid_opcode_handler(stack_frame: &ExceptionStackFrame) {
     println!("\nEXCEPTION: INVALID OPCODE at {:#x}\n\n{:#?}",
             stack_frame.instruction_pointer, stack_frame);
+    loop {}
+}
+
+extern "C" fn double_fault_handler(stack_frame: &ExceptionStackFrame,
+    _error_code: u64)
+{
+    println!("\nEXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
     loop {}
 }
 
@@ -146,9 +185,4 @@ extern "C" fn page_fault_handler(stack_frame: &ExceptionStackFrame, error_code: 
             unsafe { control_regs::cr2() }, PageFaultErrorCode::from_bits(error_code).unwrap(),
             stack_frame);
     loop {}
-}
-
-extern "C" fn breakpoint_handler(stack_frame: &ExceptionStackFrame) {
-    println!("\nEXCEPTION: BREAKPOINT at {:#x}\n\n{:#?}",
-            stack_frame.instruction_pointer, stack_frame);
 }

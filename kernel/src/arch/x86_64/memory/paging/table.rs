@@ -1,4 +1,4 @@
-use arch::memory::pmm::FrameAllocator;
+use arch::memory::frame_allocator::FrameAllocator;
 use core::marker::PhantomData;
 use core::ops::{Index, IndexMut};
 use super::ENTRY_COUNT;

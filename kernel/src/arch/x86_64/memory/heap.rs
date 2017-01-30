@@ -1,9 +1,9 @@
 use super::paging::{self, ActivePageTable};
 use super::{Page, KERNEL_HEAP_START, KERNEL_HEAP_SIZE};
-use super::pmm::FrameAllocator;
+use super::frame_allocator::FrameAllocator;
 use alloc_kernel;
 
-pub fn init<A>(active_table: &mut ActivePageTable, frame_allocator: &mut A)
+pub fn init<A>(active_table: &mut ActivePageTable, frame_allocator: &mut A) -> Page
         where A: FrameAllocator {
     assert_has_not_been_called!("heap::init must be called only once");
 
@@ -15,4 +15,6 @@ pub fn init<A>(active_table: &mut ActivePageTable, frame_allocator: &mut A)
     }
 
     unsafe { alloc_kernel::init(KERNEL_HEAP_START, KERNEL_HEAP_SIZE) };
+
+    heap_end_page
 }
