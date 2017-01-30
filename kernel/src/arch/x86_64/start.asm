@@ -5,6 +5,14 @@ extern stack_top
 section .text
 bits 64
 long_mode_start:
+    ; load 0 into all data segment registers
+    mov ax, 0
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
     ; long_mode_start gets called using its identity-mapped physical address.
     ; We need to jump to the higher half because when our kernel_start function
     ; returns, the identity-mapping will be gone.

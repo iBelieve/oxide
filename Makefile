@@ -49,7 +49,10 @@ osdev.iso: $(TARGET_DIR)/osdev.bin
 	@test -f osdev.iso || { echo "ISO not created correctly!"; exit 1; }
 
 run: osdev.iso
-	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS)
+	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -s
 
 debug: osdev.iso
+	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -s -S
+
+debug-exception: osdev.iso
 	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -d int -no-reboot

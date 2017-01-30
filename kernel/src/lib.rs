@@ -10,6 +10,7 @@ extern crate once;
 extern crate rlibc;
 extern crate spin;
 extern crate volatile;
+#[macro_use]
 extern crate x86;
 #[macro_use]
 extern crate alloc_kernel;
