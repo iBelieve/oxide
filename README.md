@@ -1,10 +1,10 @@
-OSDev in Rust
-=============
+Oxide | Operating System built with Rust
+========================================
 
-[![Travis CI](https://img.shields.io/travis/iBelieve/osdev/master.svg)]()
-[![Dependencies](https://img.shields.io/librariesio/github/iBelieve/osdev.svg)]()
-[![GitHub tag](https://img.shields.io/github/tag/iBelieve/osdev.svg)]()
-[![GitHub issues](https://img.shields.io/github/issues/iBelieve/osdev.svg)]()
+[![Travis CI](https://img.shields.io/travis/iBelieve/oxide/master.svg)]()
+[![Dependencies](https://img.shields.io/librariesio/github/iBelieve/oxide.svg)]()
+[![GitHub tag](https://img.shields.io/github/tag/iBelieve/oxide.svg)]()
+[![GitHub issues](https://img.shields.io/github/issues/iBelieve/oxide.svg)]()
 [![Maintenance](https://img.shields.io/maintenance/yes/2017.svg)]()
 
 My ramblings in the world of OS development using the [Rust programming language](http://rust-lang.org).

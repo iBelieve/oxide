@@ -3,7 +3,7 @@ tools
 
 # Intermediate build directories and other build artifacts
 target
-osdev.iso
+oxide.iso
 
 # macOS stuff
 .DS_Store

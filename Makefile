@@ -23,36 +23,36 @@ QEMU_ARGS=-m size=256
 
 .PHONY: all run clean
 
-all: osdev.iso
+all: oxide.iso
 
-iso: osdev.iso
+iso: oxide.iso
 
-test: osdev.iso
+test: oxide.iso
 
 $(TARGET_DIR)/libkernel.a: Cargo.toml kernel/Cargo.toml $(SRC_FILES)
 	$(CARGO) build --target=$(TARGET) --package kernel
 
-$(TARGET_DIR)/osdev.bin: $(ARCH_DIR)/linker.ld $(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
-	$(LD) --gc-sections --nmagic -T $(ARCH_DIR)/linker.ld -o $(TARGET_DIR)/osdev.bin \
+$(TARGET_DIR)/oxide.bin: $(ARCH_DIR)/linker.ld $(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
+	$(LD) --gc-sections --nmagic -T $(ARCH_DIR)/linker.ld -o $(TARGET_DIR)/oxide.bin \
 			$(ASM_OUT_FILES) $(TARGET_DIR)/libkernel.a
-	$(GRUB_FILE) --is-x86-multiboot2 $(TARGET_DIR)/osdev.bin
+	$(GRUB_FILE) --is-x86-multiboot2 $(TARGET_DIR)/oxide.bin
 
 $(OUT_DIR)/%.o: $(ARCH_DIR)/%.asm
 	mkdir -p $(shell dirname $@)
 	nasm -felf64 $< -o $@
 
-osdev.iso: $(TARGET_DIR)/osdev.bin
+oxide.iso: $(TARGET_DIR)/oxide.bin
 	mkdir -p $(TARGET_DIR)/isodir/boot/grub
-	cp $(TARGET_DIR)/osdev.bin $(TARGET_DIR)/isodir/boot
+	cp $(TARGET_DIR)/oxide.bin $(TARGET_DIR)/isodir/boot
 	cp data/grub.cfg $(TARGET_DIR)/isodir/boot/grub
-	$(MAKE_ISO) -o osdev.iso $(TARGET_DIR)/isodir
-	@test -f osdev.iso || { echo "ISO not created correctly!"; exit 1; }
+	$(MAKE_ISO) -o oxide.iso $(TARGET_DIR)/isodir
+	@test -f oxide.iso || { echo "ISO not created correctly!"; exit 1; }
 
-run: osdev.iso
-	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -s
+run: oxide.iso
+	$(QEMU) -cdrom oxide.iso $(QEMU_ARGS) -s
 
-debug: osdev.iso
-	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -s -S
+debug: oxide.iso
+	$(QEMU) -cdrom oxide.iso $(QEMU_ARGS) -s -S
 
-debug-exception: osdev.iso
-	$(QEMU) -cdrom osdev.iso $(QEMU_ARGS) -d int -no-reboot
+debug-exception: oxide.iso
+	$(QEMU) -cdrom oxide.iso $(QEMU_ARGS) -d int -no-reboot
