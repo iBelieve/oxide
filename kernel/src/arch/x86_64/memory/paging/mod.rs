@@ -150,9 +150,23 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
         let vga_buffer_frame = Frame::containing_address(VGA_BUFFER);
         mapper.identity_map(vga_buffer_frame, WRITABLE, allocator);
 
-        // identity map the multiboot info structure
         let multiboot_start = Frame::containing_address(boot_info.start_address());
         let multiboot_end = Frame::containing_address(boot_info.end_address() - 1);
+
+        // identity map the multiboot mudules list
+        for module in boot_info.module_tags() {
+            let module_start = Frame::containing_address(module.start_address() as usize);
+            let module_end = Frame::containing_address(module.end_address() as usize - 1);
+            println!("Mapping module {} from: {:#x} to: {:#x}" ,
+                module.name(), module.start_address(), module.end_address());
+            for frame in Frame::range_inclusive(module_start, module_end) {
+                if frame < multiboot_start || frame > multiboot_end {
+                    mapper.identity_map(frame, PRESENT, allocator);
+                }
+            }
+        }
+
+        // identity map the multiboot info structure
         for frame in Frame::range_inclusive(multiboot_start, multiboot_end) {
             mapper.identity_map(frame, PRESENT, allocator);
         }

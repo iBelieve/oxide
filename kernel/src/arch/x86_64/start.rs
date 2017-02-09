@@ -21,6 +21,8 @@ pub extern "C" fn kernel_start(multiboot_address: usize) {
 
     // TODO: Other initialization code here
 
+    initrd::init(boot_info);
+
     kernel_main();
 }
 

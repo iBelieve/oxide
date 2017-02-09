@@ -7,10 +7,12 @@ dependencies = [
  "bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "multiboot2 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "multiboot2 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nom 2.1.0",
  "once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tar-parser 0.5.0",
  "volatile 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -53,11 +55,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "multiboot2"
-version = "0.3.1"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "nom"
+version = "2.1.0"
 
 [[package]]
 name = "once"
@@ -80,6 +86,13 @@ version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "tar-parser"
+version = "0.5.0"
+dependencies = [
+ "nom 2.1.0",
+]
+
+[[package]]
 name = "volatile"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -99,7 +112,7 @@ dependencies = [
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
 "checksum lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6abe0ee2e758cd6bc8a2cd56726359007748fbf4128da998b65d0b70f881e19b"
 "checksum linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3504327a5901bc4fb25ca095d67a6d3f48be4233dc08230f197b313736a13384"
-"checksum multiboot2 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "88aedb52b616203e987bf9cd0c2779e281eefcfa23bd23dc9734f2dcf54079ad"
+"checksum multiboot2 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "dcea5906310f2607ea39a42b8af0745dc487d7583db9d981142a63b538647f69"
 "checksum once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1ae5868dd493edd93941c182240a2c019dfe84c7d2de51d4659da32e58688ce9"
 "checksum raw-cpuid 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7bc8e963398e6244e1d51c42dd68394f273d39ed8afc9238b74f56041b23dbd3"
 "checksum rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc874b127765f014d792f16763a81245ab80500e2ad921ed4ee9e82481ee08fe"

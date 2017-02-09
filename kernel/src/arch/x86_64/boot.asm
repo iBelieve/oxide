@@ -179,5 +179,5 @@ p3_table:       ; Page-Directory Pointer Table (PDP)
 p2_table:       ; Page-Directory Table (PD)
     resb 4096
 stack_bottom:
-    resb 4096 * 2  ; 16 KiB
+    resb 4096 * 32  ; 128 KiB
 stack_top:

@@ -20,6 +20,8 @@ extern crate alloc;
 extern crate bit_field;
 #[macro_use]
 extern crate lazy_static;
+extern crate nom;
+extern crate tar;
 
 
 pub use arch::kernel_start;

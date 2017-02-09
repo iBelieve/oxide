@@ -8,7 +8,8 @@ version = "0.1.0"
 bit_field = "0.7.0"
 bitflags = "0.7.0"
 linked_list_allocator = "0.2.3"
-multiboot2 = "*"
+multiboot2 = "0.3.2"
+nom = { version = "2.1.0", path = "../../nom" }
 once = "0.3"
 rlibc = "*"
 spin = "*"
@@ -17,13 +18,17 @@ volatile = "*"
 [dependencies.alloc_kernel]
 path = "../alloc_kernel"
 
+[dependencies.lazy_static]
+features = ["spin_no_std"]
+version = "0.2.1"
+
+[dependencies.tar-parser]
+features = ["no_std"]
+path = "../../tar-parser.rs"
+
 [dependencies.x86]
 default-features = false
 version = "*"
-
-[dependencies.lazy_static]
-version = "0.2.1"
-features = ["spin_no_std"]
 
 [lib]
 crate-type = ["staticlib"]

@@ -41,10 +41,13 @@ $(OUT_DIR)/%.o: $(ARCH_DIR)/%.asm
 	mkdir -p $(shell dirname $@)
 	nasm -felf64 $< -o $@
 
-oxide.iso: $(TARGET_DIR)/oxide.bin
+oxide.iso: $(TARGET_DIR)/oxide.bin data/grub.cfg data/initrd/*
 	mkdir -p $(TARGET_DIR)/isodir/boot/grub
 	cp $(TARGET_DIR)/oxide.bin $(TARGET_DIR)/isodir/boot
 	cp data/grub.cfg $(TARGET_DIR)/isodir/boot/grub
+	rm -r $(TARGET_DIR)/initrd || true
+	cp -r data/initrd $(TARGET_DIR)/initrd
+	tar -cf $(TARGET_DIR)/isodir/boot/oxide.initrd -C $(TARGET_DIR)/initrd .
 	$(MAKE_ISO) -o oxide.iso $(TARGET_DIR)/isodir
 	@test -f oxide.iso || { echo "ISO not created correctly!"; exit 1; }
 
