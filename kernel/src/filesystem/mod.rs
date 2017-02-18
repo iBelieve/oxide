@@ -67,12 +67,16 @@ fn init_fs() -> RwLock<VirtualFilesystem> {
     RwLock::new(VirtualFilesystem::new())
 }
 
-pub fn fs() -> RwLockReadGuard<'static, VirtualFilesystem> {
+fn fs() -> RwLockReadGuard<'static, VirtualFilesystem> {
     FILESYSTEM.call_once(init_fs).read()
 }
 
 fn mut_fs() -> RwLockWriteGuard<'static, VirtualFilesystem> {
     FILESYSTEM.call_once(init_fs).write()
+}
+
+pub fn open(path: &str) -> Option<Box<FileDescriptor>> {
+    fs().get_file(path)
 }
 
 pub fn mount(path: &str, fs: Box<Filesystem>) {

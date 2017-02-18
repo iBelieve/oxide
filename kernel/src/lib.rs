@@ -52,7 +52,7 @@ fn kernel_main() {
     tasking::switch();
     println!("Back in main.");
 
-    if let Some(mut file) = filesystem::fs().get_file("/initrd/hello.txt") {
+    if let Some(mut file) = filesystem::open("/initrd/hello.txt") {
         ok!("Found file: {}", from_utf8(file.read().as_slice()).expect("Unable to decode file"));
     } else {
         fail!("File not found :(");

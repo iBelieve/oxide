@@ -6,7 +6,7 @@ authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
 publish = false
 
 [lib]
-crate-type = ["staticlib"]
+crate-type = ["lib", "staticlib"]
 
 [dependencies]
 bit_field = "0.7.0"

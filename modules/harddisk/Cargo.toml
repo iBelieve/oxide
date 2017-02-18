@@ -1,0 +1,11 @@
+[package]
+authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
+name = "harddisk"
+publish = false
+version = "0.1.0"
+
+[dependencies]
+kernel = { path = "../../kernel" }
+
+[lib]
+crate-type = ["rlib"]
