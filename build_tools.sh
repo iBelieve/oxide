@@ -139,7 +139,7 @@ main() {
 
     install
 
-    if [ $CI = true ]; then
+    if [ "$CI" = true ]; then
         echo "===== Cleanup ====="
         cleanup
     fi

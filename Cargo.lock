@@ -6,13 +6,13 @@ dependencies = [
  "bit_field 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "linked_list_allocator 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "multiboot2 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "nom 2.1.0",
+ "nom 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "tar-parser 0.5.0",
+ "tar-parser 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "volatile 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -21,7 +21,7 @@ dependencies = [
 name = "alloc_kernel"
 version = "0.1.0"
 dependencies = [
- "linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "linked_list_allocator 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -50,7 +50,7 @@ dependencies = [
 
 [[package]]
 name = "linked_list_allocator"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -64,6 +64,13 @@ dependencies = [
 [[package]]
 name = "nom"
 version = "2.1.0"
+source = "git+https://github.com/iBelieve/nom?branch=feature/no_std_str_traits#7a82d291c32aef38d7041c3206545cbbe49eb917"
+
+[[package]]
+name = "nom"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+replace = "nom 2.1.0 (git+https://github.com/iBelieve/nom?branch=feature/no_std_str_traits)"
 
 [[package]]
 name = "once"
@@ -88,9 +95,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "tar-parser"
 version = "0.5.0"
+source = "git+https://github.com/iBelieve/tar-parser.rs?branch=feature/no_std_feature#812bd278073b38c69ab38739b4fac5857e1a3d6e"
 dependencies = [
- "nom 2.1.0",
+ "nom 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "tar-parser"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+replace = "tar-parser 0.5.0 (git+https://github.com/iBelieve/tar-parser.rs?branch=feature/no_std_feature)"
 
 [[package]]
 name = "volatile"
@@ -111,11 +125,15 @@ dependencies = [
 "checksum bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8dead7461c1127cf637931a1e50934eb6eee8bff2f74433ac7909e9afcee04a3"
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
 "checksum lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6abe0ee2e758cd6bc8a2cd56726359007748fbf4128da998b65d0b70f881e19b"
-"checksum linked_list_allocator 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "3504327a5901bc4fb25ca095d67a6d3f48be4233dc08230f197b313736a13384"
+"checksum linked_list_allocator 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)" = "b1fb30de7931309c40e57aedb6d1520fd328e2b9477b21882b7ebd49329e7400"
 "checksum multiboot2 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "dcea5906310f2607ea39a42b8af0745dc487d7583db9d981142a63b538647f69"
+"checksum nom 2.1.0 (git+https://github.com/iBelieve/nom?branch=feature/no_std_str_traits)" = "<none>"
+"checksum nom 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e5d4598834859fedb9a0a69d5b862a970e77982a92f544d547257a4d49469067"
 "checksum once 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1ae5868dd493edd93941c182240a2c019dfe84c7d2de51d4659da32e58688ce9"
 "checksum raw-cpuid 2.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7bc8e963398e6244e1d51c42dd68394f273d39ed8afc9238b74f56041b23dbd3"
 "checksum rlibc 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc874b127765f014d792f16763a81245ab80500e2ad921ed4ee9e82481ee08fe"
 "checksum spin 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "1d16a26e2b789f86aabddbe91cb82ee2e822beb8a59840d631941b625ef77e53"
+"checksum tar-parser 0.5.0 (git+https://github.com/iBelieve/tar-parser.rs?branch=feature/no_std_feature)" = "<none>"
+"checksum tar-parser 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "52a311c2a709ec6de69f3d841d0cea2da1718f8525b9054704e229d152482bcf"
 "checksum volatile 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "6633c5250f16598f92b48272265ce9f8179447f702f0ba0cb640c5be6537b0c0"
 "checksum x86 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ada1976e1004a0b5999beb7403541af96637e8f439b97d86c8c9abef2e0e7d19"

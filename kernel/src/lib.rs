@@ -23,9 +23,10 @@ extern crate lazy_static;
 extern crate nom;
 extern crate tar;
 
-
 pub use arch::kernel_start;
 pub use runtime::*;
+
+use core::str::from_utf8;
 
 #[macro_use]
 mod int_like;
@@ -37,6 +38,7 @@ mod bitmap;
 mod time;
 mod runtime;
 mod tasking;
+mod filesystem;
 
 
 fn kernel_main() {
@@ -48,6 +50,12 @@ fn kernel_main() {
     tasking::spawn(task_2);
     tasking::switch();
     println!("Back in main.");
+
+    if let Some(mut file) = filesystem::fs().get_file("/initrd/hello.txt") {
+        println!("Found file: {}", from_utf8(file.read().as_slice()).expect("Unable to decode file"));
+    } else {
+        println!("File not found :(");
+    }
 }
 
 fn separate_task() {

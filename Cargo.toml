@@ -6,3 +6,7 @@ panic = "abort"
 
 [profile.release]
 panic = "abort"
+
+[replace]
+"nom:2.1.0" = { git = "https://github.com/iBelieve/nom", branch = "feature/no_std_str_traits" }
+"tar-parser:0.5.0" = { git = "https://github.com/iBelieve/tar-parser.rs", branch = "feature/no_std_feature" }

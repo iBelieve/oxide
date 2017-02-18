@@ -3,6 +3,7 @@ use core::slice;
 use core::str::from_utf8;
 use tar::*;
 use nom::IResult;
+use filesystem::{self, TarFilesystem};
 
 pub fn init(boot_info: &BootInformation) {
     let initrd = boot_info.module_tags().find(|m| m.name() == "initrd")
@@ -15,9 +16,9 @@ pub fn init(boot_info: &BootInformation) {
 
     match parse_tar(bytes) {
         IResult::Done(_, entries) => {
-            for e in entries.iter() {
-                println!("{}: {}", e.header.name, from_utf8(e.contents).unwrap());
-            }
+            let fs = TarFilesystem::new(entries);
+
+            filesystem::mount("/initrd", box fs);
         }
         e  => {
             println!("error or incomplete: {:?}", e);
