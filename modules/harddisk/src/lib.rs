@@ -4,6 +4,7 @@
 
 extern crate kernel;
 
+#[no_mangle]
 pub extern "C" fn init() {
     let hello = b"Hello World!";
     let color_byte = 0x1f; // white foreground, blue background

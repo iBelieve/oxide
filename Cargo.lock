@@ -22,6 +22,11 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "goblin"
+version = "0.0.7"
+source = "git+https://github.com/m4b/goblin.git#add207f894bbeaa9b90b7b7c35d2c96f4c36d52d"
+
+[[package]]
 name = "harddisk"
 version = "0.1.0"
 dependencies = [
@@ -35,6 +40,7 @@ dependencies = [
  "alloc_kernel 0.0.1",
  "bit_field 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "goblin 0.0.7 (git+https://github.com/m4b/goblin.git)",
  "lazy_static 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "linked_list_allocator 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "multiboot2 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -145,6 +151,7 @@ dependencies = [
 "checksum bit_field 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ff91a64014e1bc53bf643920f2c9ab5f0980d92a0948295f3ee550e9266849ad"
 "checksum bitflags 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8dead7461c1127cf637931a1e50934eb6eee8bff2f74433ac7909e9afcee04a3"
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
+"checksum goblin 0.0.7 (git+https://github.com/m4b/goblin.git)" = "<none>"
 "checksum lazy_static 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)" = "76f033c7ad61445c5b347c7382dd1237847eb1bce590fe50365dcb33d546be73"
 "checksum linked_list_allocator 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1d9b8a68289fdacb7242a519f3cf181a3394ebed3bd092ee07ffa2e5c2088afd"
 "checksum memchr 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "148fab2e51b4f1cfc66da2a7c32981d1d3c083a803978268bb11fe4b86925e7a"

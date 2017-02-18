@@ -21,6 +21,7 @@ extern crate bit_field;
 extern crate lazy_static;
 extern crate nom;
 extern crate tar;
+extern crate goblin;
 
 pub use arch::kernel_start;
 pub use runtime::*;
@@ -37,9 +38,11 @@ mod logging;
 mod arch;
 
 pub mod time;
+
+mod elf;
+mod filesystem;
 mod runtime;
 mod tasking;
-mod filesystem;
 
 
 fn kernel_main() {

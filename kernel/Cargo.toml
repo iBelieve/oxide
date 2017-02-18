@@ -36,3 +36,8 @@ default-features = false
 [dependencies.nom]
 version = "3.2.1"
 default-features = false
+
+[dependencies.goblin]
+git = "https://github.com/m4b/goblin.git"
+default-features = false
+features = ["elf32", "elf64"]

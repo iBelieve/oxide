@@ -1,3 +1,3 @@
-$(TARGET_DIR)/harddisk.ko: Cargo.toml modules/harddisk/Cargo.toml modules/harddisk/src/**
+$(TARGET_DIR)/harddisk.ko: $(TARGET_DIR)/libkernel.a Cargo.toml modules/harddisk/Cargo.toml modules/harddisk/src/**
 	$(CARGO) build --target=$(TARGET) --package harddisk
-	mv $(TARGET_DIR)/libharddisk.rlib $(TARGET_DIR)/harddisk.ko
+	$(LD) -r --require-defined init -o $(TARGET_DIR)/harddisk.ko $(TARGET_DIR)/libharddisk.rlib
