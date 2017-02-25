@@ -38,11 +38,13 @@ pub fn read(bytes: &[u8]) {
         Ok(elf) => {
             println!("Loaded elf!");
 
-            let shdr_strtab = elf.shdr_strtab();
+            elf.load();
 
-            for section in elf.sections() {
-                println!("Section: {}", shdr_strtab.get(section.sh_name as usize));
-            }
+            // let shdr_strtab = elf.shdr_strtab();
+
+            // for section in elf.sections() {
+            //     println!("Section: {}", shdr_strtab.get(section.sh_name as usize));
+            // }
         },
         Err(e)  => {
             println!("error: {}", e);
