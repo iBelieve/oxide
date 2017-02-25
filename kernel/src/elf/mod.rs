@@ -4,7 +4,7 @@ use alloc::{String, Vec};
 
 use core::str;
 use self::strtab::Strtab;
-use self::section::{SectionEntries, Relocs};
+use self::section::{SectionEntries};
 
 #[cfg(target_arch = "x86")]
 pub use goblin::elf32::{header, program_header, section_header, reloc, sym};
@@ -68,8 +68,23 @@ impl<'a> Elf<'a> {
         }
     }
 
-    pub fn shdr_relocs(&'a self) -> Relocs<'a> {
-        return Relocs::new(self)
+    pub fn shdr_relocs(&'a self) -> Vec<reloc::Reloc> {
+        self.sections()
+            .filter(|section| section.sh_type == section_header::SHT_REL || section.sh_type == section_header::SHT_RELA)
+            .flat_map(|section| {
+                if section.sh_type == section_header::SHT_REL {
+                    SectionEntries::<reloc::Rel>::new(self.data, section)
+                        .map(|rel| reloc::Reloc::from(rel.clone()))
+                        .collect::<Vec<reloc::Reloc>>()
+                } else if section.sh_type == section_header::SHT_RELA {
+                    SectionEntries::<reloc::Rela>::new(self.data, section)
+                        .map(|rela| reloc::Reloc::from(rela.clone()))
+                        .collect::<Vec<reloc::Reloc>>()
+                } else {
+                    panic!("Unexpected section type: {}", section.sh_type);
+                }
+            })
+            .collect()
     }
 
     pub fn segment(&self, index: usize) -> Option<&program_header::ProgramHeader> {
