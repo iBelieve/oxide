@@ -1,7 +1,6 @@
 #![no_std]
 #![feature(lang_items)]
 
-
 extern crate kernel;
 
 #[no_mangle]
@@ -18,18 +17,3 @@ pub extern "C" fn init() {
     let buffer_ptr = (0xb8000 + 1988) as *mut _;
     unsafe { *buffer_ptr = hello_colored };
 }
-
-// #[lang = "eh_personality"]
-// extern fn eh_personality() {}
-//
-// #[lang = "panic_fmt"]
-// #[no_mangle]
-// pub extern fn panic_fmt(fmt: core::fmt::Arguments, file: &'static str, line: u32) -> ! {
-//     loop {}
-// }
-//
-// #[allow(non_snake_case)]
-// #[no_mangle]
-// pub extern fn _Unwind_Resume() -> ! {
-//     loop {}
-// }

@@ -3,7 +3,7 @@ use core::slice;
 use tar::*;
 use nom::IResult;
 use filesystem::{self, TarFilesystem};
-use elf::Elf;
+use elf::{Elf, program_header};
 
 pub fn init(boot_info: &BootInformation) {
     let initrd = boot_info.module_tags().find(|m| m.name() == "initrd")
@@ -37,6 +37,12 @@ pub fn read(bytes: &[u8]) {
     match Elf::from(bytes) {
         Ok(elf) => {
             println!("Loaded elf!");
+
+            let shdr_strtab = elf.shdr_strtab();
+
+            for section in elf.sections() {
+                println!("Section: {}", shdr_strtab.get(section.sh_name as usize));
+            }
         },
         Err(e)  => {
             println!("error: {}", e);
