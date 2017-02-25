@@ -4,14 +4,16 @@ use alloc::{String, Vec};
 
 use core::str;
 use self::strtab::Strtab;
+use self::section::{SectionEntries, Relocs};
 
 #[cfg(target_arch = "x86")]
-pub use goblin::elf32::{header, program_header, section_header, reloc};
+pub use goblin::elf32::{header, program_header, section_header, reloc, sym};
 
 #[cfg(target_arch = "x86_64")]
-pub use goblin::elf64::{header, program_header, section_header, reloc};
+pub use goblin::elf64::{header, program_header, section_header, reloc, sym};
 
 mod strtab;
+mod section;
 
 /// An ELF executable
 pub struct Elf<'a> {
@@ -66,31 +68,8 @@ impl<'a> Elf<'a> {
         }
     }
 
-    pub fn shdr_relocs(&self) -> Vec<reloc::Reloc> {
-        let mut relocs = vec![];
-        if self.header.e_type == header::ET_REL {
-            for section in self.sections() {
-                if section.sh_type == section_header::SHT_REL {
-                    let iter = Relocs {
-                        data: self.data,
-                        header: section,
-                        is_rela: false,
-                        i: 0
-                    };
-                    relocs.extend(iter);
-                }
-                if section.sh_type == section_header::SHT_RELA {
-                    let iter = Relocs {
-                        data: self.data,
-                        header: section,
-                        is_rela: true,
-                        i: 0
-                    };
-                    relocs.extend(iter);
-                }
-            }
-        }
-        relocs
+    pub fn shdr_relocs(&'a self) -> Relocs<'a> {
+        return Relocs::new(self)
     }
 
     pub fn segment(&self, index: usize) -> Option<&program_header::ProgramHeader> {
@@ -168,6 +147,40 @@ impl<'a> Elf<'a> {
 
         Ok(())
     }
+
+    // fn relocate(&self, section: &section_header::SectionHeader, reloc: &reloc::Reloc) -> Result<(), RelocateError> {
+    //     let reference = self.section(section.sh_info).sh_offset + reloc->sh_offset;
+    //     let mut symbol_value = 0;
+
+    //     Symbol sym = symbol();
+    //     if (!sym.isNull()) {
+    //         symval = sym.value();
+    //         if (symval == -1) {
+    //             kerror() << "Unable to find symbol value!\n";
+    //             return false;
+    //         }
+    //     }
+
+    //     // Relocate based on type
+    //     switch (type()) {
+    //     case RelocationType::R_386_NONE:
+    //         // No relocation
+    //         return true;
+    //     case RelocationType::R_386_32:
+    //         // Symbol + Offset
+    //         *ref = DO_386_32(symval, *ref);
+    //         return true;
+    //     case RelocationType::R_386_PC32:
+    //         // Symbol + Offset - Section Offset
+    //         *ref = DO_386_PC32(symval, *ref, (int) ref);
+    //         return true;
+    //     default:
+    //         // Relocation type not supported, display error and return
+    //         kerror() << "Unsupported Relocation Type: " << String::hex(static_cast<int>(type()))
+    //                 << '\n';
+    //         return false;
+    //     }
+    // }
 }
 
 pub struct ElfSegments<'a> {
@@ -180,25 +193,6 @@ pub struct ElfSections<'a> {
     data: &'a [u8],
     header: &'a header::Header,
     i: usize
-}
-
-pub struct Relocs<'a> {
-    data: &'a [u8],
-    header: &'a section_header::SectionHeader,
-    is_rela: bool,
-    i: usize
-}
-
-impl<'a> Relocs<'a> {
-    fn is_rela(&self) -> bool {
-        self.header.sh_type == section_header::SHT_RELA
-    }
-
-    fn len(&self) -> usize {
-        let sizeof_relocation = if self.is_rela { reloc::SIZEOF_RELA } else { reloc::SIZEOF_REL };
-
-        self.header.sh_size as usize / sizeof_relocation
-    }
 }
 
 impl<'a> Iterator for ElfSegments<'a> {
@@ -235,40 +229,6 @@ impl<'a> Iterator for ElfSections<'a> {
             };
             self.i += 1;
             Some(item)
-        } else {
-            None
-        }
-    }
-}
-
-impl<'a> Iterator for Relocs<'a> {
-    type Item = reloc::Reloc;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.i < self.len() {
-            if self.is_rela {
-                let item = unsafe {
-                    &* ((
-                            self.data.as_ptr() as usize
-                            + self.header.sh_offset as usize
-                            + self.i * reloc::SIZEOF_RELA
-                        ) as *const reloc::Rela)
-                };
-
-                self.i += 1;
-                Some(reloc::Reloc::from(item.clone()))
-            } else {
-                let item = unsafe {
-                    &* ((
-                            self.data.as_ptr() as usize
-                            + self.header.sh_offset as usize
-                            + self.i * reloc::SIZEOF_REL
-                        ) as *const reloc::Rel)
-                };
-
-                self.i += 1;
-                Some(reloc::Reloc::from(item.clone()))
-            }
         } else {
             None
         }
