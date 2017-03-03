@@ -4,7 +4,8 @@ use alloc::{String, Vec};
 
 use core::str;
 use self::strtab::Strtab;
-use self::section::{SectionEntries};
+use self::section::{Section};
+use self::symbol::Symbol;
 
 #[cfg(target_arch = "x86")]
 pub use goblin::elf32::{header, program_header, section_header, reloc, sym};
@@ -14,6 +15,7 @@ pub use goblin::elf64::{header, program_header, section_header, reloc, sym};
 
 mod strtab;
 mod section;
+mod symbol;
 
 /// An ELF executable
 pub struct Elf<'a> {
@@ -21,13 +23,15 @@ pub struct Elf<'a> {
     header: &'a header::Header
 }
 
-enum LoadError {
-    RelocateError(RelocateError)
+pub enum Error {
+    Relocate(RelocateError),
+    UndefinedSymbol(String),
+    Malformed(String)
 }
 
-impl From<RelocateError> for LoadError {
-    fn from(e: RelocateError) -> LoadError {
-        LoadError::RelocateError(e)
+impl From<RelocateError> for Error {
+    fn from(e: RelocateError) -> Error {
+        Error::Relocate(e)
     }
 }
 
@@ -54,45 +58,75 @@ impl<'a> Elf<'a> {
 
     pub fn segments(&'a self) -> ElfSegments<'a> {
         ElfSegments {
-            data: self.data,
-            header: self.header,
+            elf: self,
             i: 0
         }
     }
 
     pub fn sections(&'a self) -> ElfSections<'a> {
         ElfSections {
-            data: self.data,
-            header: self.header,
+            elf: self,
             i: 0
         }
     }
 
-    pub fn shdr_relocs(&'a self) -> Vec<reloc::Reloc> {
+    pub fn shdr_relocs(&self) -> Vec<reloc::Reloc> {
         self.sections()
-            .filter(|section| section.sh_type == section_header::SHT_REL || section.sh_type == section_header::SHT_RELA)
+            .filter(|section| section.sh_type() == section_header::SHT_REL || section.sh_type() == section_header::SHT_RELA)
             .flat_map(|section| {
-                if section.sh_type == section_header::SHT_REL {
-                    SectionEntries::<reloc::Rel>::new(self.data, section)
+                if section.sh_type() == section_header::SHT_REL {
+                    section.entries::<reloc::Rel>()
                         .map(|rel| reloc::Reloc::from(rel.clone()))
                         .collect::<Vec<reloc::Reloc>>()
-                } else if section.sh_type == section_header::SHT_RELA {
-                    SectionEntries::<reloc::Rela>::new(self.data, section)
+                } else if section.sh_type() == section_header::SHT_RELA {
+                    section.entries::<reloc::Rel>()
                         .map(|rela| reloc::Reloc::from(rela.clone()))
                         .collect::<Vec<reloc::Reloc>>()
                 } else {
-                    panic!("Unexpected section type: {}", section.sh_type);
+                    panic!("Unexpected section type: {}", section.sh_type());
                 }
             })
             .collect()
     }
 
-    pub fn segment(&self, index: usize) -> Option<&program_header::ProgramHeader> {
-        self.segments().nth(index)
+    pub fn symbol(&'a self, table: usize, index: usize) -> Option<Symbol<'a>> {
+        if let Some(symtab) = self.section(table) {
+            if let Some(sym) = symtab.entry::<sym::Sym>(index) {
+                Some(Symbol::new(symtab, sym))
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 
-    pub fn section(&self, index: usize) -> Option<&section_header::SectionHeader> {
-        self.sections().nth(index)
+    pub fn segment(&self, index: usize) -> Option<&program_header::ProgramHeader> {
+        if index < self.header.e_phnum as usize {
+            Some(unsafe {
+                &* ((
+                        self.data.as_ptr() as usize
+                        + self.header.e_phoff as usize
+                        + index* self.header.e_phentsize as usize
+                    ) as *const program_header::ProgramHeader)
+            })
+        } else {
+            None
+        }
+    }
+
+    pub fn section(&'a self, index: usize) -> Option<Section<'a>> {
+        if index < self.header.e_shnum as usize {
+            Some(Section::new(self, unsafe {
+                &* ((
+                        self.data.as_ptr() as usize
+                        + self.header.e_shoff as usize
+                        + index * self.header.e_shentsize as usize
+                    ) as *const section_header::SectionHeader)
+            }))
+        } else {
+            None
+        }
     }
 
     /// Get the entry field of the header
@@ -102,10 +136,8 @@ impl<'a> Elf<'a> {
 
     pub fn strtab(&self) -> Strtab {
         for section in self.sections() {
-            if section.sh_type == section_header::SHT_STRTAB {
-                let start = section.sh_offset as usize;
-                let end = (section.sh_offset + section.sh_size) as usize;
-                return Strtab::from_raw(&self.data[start..end], 0x0);
+            if section.sh_type() == section_header::SHT_STRTAB {
+                return Strtab::new(&section, 0x0);
             }
         }
 
@@ -116,28 +148,26 @@ impl<'a> Elf<'a> {
         let strtab_idx = self.header.e_shstrndx as usize;
 
         if let Some(section) = self.section(strtab_idx) {
-            let start = section.sh_offset as usize;
-            let end = (section.sh_offset + section.sh_size) as usize;
-            Strtab::from_raw(&self.data[start..end], 0x0)
+            Strtab::new(&section, 0x0)
         } else {
             Strtab::default()
         }
     }
 
-    pub fn load(&self) -> Result<(), LoadError> {
+    pub fn load(&self) -> Result<(), Error> {
         try!(self.load_stage1());
         try!(self.load_stage2());
         Ok(())
     }
 
-    fn load_stage1(&self) -> Result<(), LoadError> {
+    fn load_stage1(&self) -> Result<(), Error> {
         for section in self.sections() {
-            if section.sh_type == section_header::SHT_NOBITS {
-                if section.sh_size == 0 {
+            if section.sh_type() == section_header::SHT_NOBITS {
+                if section.sh_size() == 0 {
                     continue;
                 }
 
-                if (section.sh_flags as u32) & section_header::SHF_ALLOC != 0 {
+                if section.sh_flags() & section_header::SHF_ALLOC != 0 {
                     unimplemented!();
                     // Allocate and zero some memory
                     // void *mem = kmalloc(section.sectionHeader->size);
@@ -146,7 +176,7 @@ impl<'a> Elf<'a> {
                     // Assign the memory offset to the section offset
                     // section.sectionHeader->offset = reinterpret_cast<uintptr_t>(mem) - baseAddress();
 
-                    println!("Allocated memory for section: {}", self.shdr_strtab().get(section.sh_name as usize));
+                    println!("Allocated memory for section: {}", section.sh_name());
                 }
             }
         }
@@ -154,7 +184,7 @@ impl<'a> Elf<'a> {
         Ok(())
     }
 
-    fn load_stage2(&self) -> Result<(), LoadError> {
+    fn load_stage2(&self) -> Result<(), Error> {
         for reloc in self.shdr_relocs() {
             unimplemented!();
             // try!(reloc.relocate());
@@ -199,14 +229,7 @@ impl<'a> Elf<'a> {
 }
 
 pub struct ElfSegments<'a> {
-    data: &'a [u8],
-    header: &'a header::Header,
-    i: usize
-}
-
-pub struct ElfSections<'a> {
-    data: &'a [u8],
-    header: &'a header::Header,
+    elf: &'a Elf<'a>,
     i: usize
 }
 
@@ -214,36 +237,27 @@ impl<'a> Iterator for ElfSegments<'a> {
     type Item = &'a program_header::ProgramHeader;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.i < self.header.e_phnum as usize {
-            let item = unsafe {
-                &* ((
-                        self.data.as_ptr() as usize
-                        + self.header.e_phoff as usize
-                        + self.i * self.header.e_phentsize as usize
-                    ) as *const program_header::ProgramHeader)
-            };
+        if let Some(segment) = self.elf.segment(self.i) {
             self.i += 1;
-            Some(item)
+            Some(segment)
         } else {
             None
         }
     }
 }
 
+pub struct ElfSections<'a> {
+    elf: &'a Elf<'a>,
+    i: usize
+}
+
 impl<'a> Iterator for ElfSections<'a> {
-    type Item = &'a section_header::SectionHeader;
+    type Item = Section<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.i < self.header.e_shnum as usize {
-            let item = unsafe {
-                &* ((
-                        self.data.as_ptr() as usize
-                        + self.header.e_shoff as usize
-                        + self.i * self.header.e_shentsize as usize
-                    ) as *const section_header::SectionHeader)
-            };
+        if let Some(section) = self.elf.section(self.i) {
             self.i += 1;
-            Some(item)
+            Some(section)
         } else {
             None
         }

@@ -1,4 +1,5 @@
 use core::str;
+use super::Section;
 
 pub struct Strtab<'a> {
     bytes: &'a [u8],
@@ -13,14 +14,14 @@ impl<'a> Strtab<'a> {
         }
     }
 
-    pub fn from_raw(bytes: &'a [u8], delim: u8) -> Strtab<'a> {
+    pub fn new(section: &Section<'a>, delim: u8) -> Strtab<'a> {
         Strtab {
-            bytes: bytes,
+            bytes: section.data,
             delim: delim,
         }
     }
 
-    pub fn get(&self, idx: usize) -> &str {
+    pub fn get(&self, idx: usize) -> &'a str {
         let mut i = idx;
         let len = self.bytes.len();
         if i >= len {
