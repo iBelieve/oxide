@@ -1,5 +1,5 @@
 use alloc::arc::Arc;
-use collections::BTreeMap;
+use alloc::BTreeMap;
 use core::mem;
 use spin::RwLock;
 use super::{Task, TaskId, TaskMain, current_task_id, MAX_TASKS};
@@ -18,7 +18,7 @@ impl TaskList {
        }
     }
 
-    pub fn iter(&self) -> ::collections::btree_map::Iter<TaskId, Arc<RwLock<Task>>> {
+    pub fn iter(&self) -> ::alloc::btree_map::Iter<TaskId, Arc<RwLock<Task>>> {
         self.tasks.iter()
     }
 

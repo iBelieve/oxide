@@ -2,6 +2,15 @@
 
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/" && pwd )"
+
+export PREFIX="$SCRIPT_DIR/tools"
+export TARGET=x86_64-elf
+export BINUTILS_VERSION=2.29.1
+export GCC_VERSION=7.2.0
+export GRUB_VERSION=2.02
+export PATH="$PREFIX/bin:$PATH"
+
 silent() {
     while read line; do
         printf '.'
@@ -10,7 +19,7 @@ silent() {
 }
 
 run() {
-    if [ $CI = true ]; then
+    if [ "$CI" == "true" ]; then
         "$@" | silent
     else
         "$@"
@@ -82,21 +91,13 @@ install_gcc() {
 
 install_grub() {
     echo "===== GRUB ====="
-    download_git objconv https://github.com/vertis/objconv.git
-    download_git grub git://git.savannah.gnu.org/grub.git
-
-    echo "::: Building Objconv"
-    # Build objconv
-    pushd objconv
-    g++ -o objconv -O2 src/*.cpp
-    cp objconv $PREFIX/bin
-    popd
+    download_tar grub-$GRUB_VERSION.tar.xz ftp://ftp.gnu.org/gnu/grub/grub-$GRUB_VERSION.tar.xz
 
     pushd grub
 
     echo "::: Configuring GRUB"
     run ./autogen.sh
-    run ../grub/configure --disable-werror TARGET_CC=$TARGET-gcc TARGET_OBJCOPY=$TARGET-objcopy \
+    run ./configure --disable-werror TARGET_CC=$TARGET-gcc TARGET_OBJCOPY=$TARGET-objcopy \
             TARGET_STRIP=$TARGET-strip TARGET_NM=$TARGET-nm TARGET_RANLIB=$TARGET-ranlib \
             --target=$TARGET --prefix="$PREFIX"
 
@@ -122,27 +123,11 @@ install() {
     fi
 }
 
-cleanup() {
+mkdir -p $PREFIX/src; cd $PREFIX/src
+
+install
+
+if [ "$CI" = true ]; then
+    echo "===== Cleanup ====="
     rm -rf "$PREFIX/src"
-}
-
-main() {
-    SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-    export PREFIX="$SCRIPT_DIR/tools"
-    export TARGET=x86_64-elf
-    export BINUTILS_VERSION=2.27
-    export GCC_VERSION=6.3.0
-    export PATH="$PREFIX/bin:$PATH"
-
-    mkdir -p $PREFIX/src; cd $PREFIX/src
-
-    install
-
-    if [ "$CI" = true ]; then
-        echo "===== Cleanup ====="
-        cleanup
-    fi
-}
-
-main
+fi

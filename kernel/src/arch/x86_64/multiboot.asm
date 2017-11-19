@@ -1,14 +1,21 @@
 section .multiboot_header
+
+MAGIC equ 0xe85250d6
+ARCH equ 0 ; protected mode i686
+LENGTH equ header_end - header_start
+
+CHECKSUM equ 0x100000000 - (MAGIC + ARCH + LENGTH)
+
 header_start:
-    dd 0xE85250D6                   ; Magic number (multiboot 2)
-    dd 0                            ; Architecture 0 (protected mode i386)
-    dd header_end - header_start    ; Header length
-    ; Checksum, which when added to the other fields, equals 0
-    dd 0x100000000 - (0xe85250d6 + 0 + (header_end - header_start))
+    dd MAGIC
+    dd ARCH
+    dd LENGTH
 
-    ; Optional multiboot tags go here...
+    dd CHECKSUM
 
-    ; Required end tag
+    ; insert optional multiboot tags here
+
+    ; required end tag
     dw 0    ; type
     dw 0    ; flags
     dd 8    ; size

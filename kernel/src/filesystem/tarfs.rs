@@ -1,5 +1,5 @@
-use collections::Vec;
 use alloc::boxed::Box;
+use alloc::Vec;
 use tar::*;
 use super::{FileDescriptor, Filesystem};
 

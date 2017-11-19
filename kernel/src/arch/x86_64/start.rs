@@ -4,8 +4,6 @@ use ::kernel_main;
 
 #[no_mangle]
 pub extern "C" fn kernel_start(multiboot_address: usize) {
-    let boot_info = unsafe { multiboot2::load(multiboot_address) };
-
     enable_nxe_bit();
     enable_write_protect_bit();
 
@@ -15,6 +13,7 @@ pub extern "C" fn kernel_start(multiboot_address: usize) {
 
     clock::init();
 
+    let boot_info = unsafe { multiboot2::load(multiboot_address) };
     let mut memory_controller = memory::init(boot_info);
 
     interrupts::init(&mut memory_controller);

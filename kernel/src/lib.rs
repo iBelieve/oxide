@@ -1,5 +1,6 @@
-#![feature(asm, const_fn, fixed_size_array, lang_items, unique, collections, alloc,
-           box_syntax, drop_types_in_const, naked_functions, thread_local, core_intrinsics)]
+#![feature(asm, const_fn, fixed_size_array, lang_items, unique, alloc, box_syntax,
+           drop_types_in_const, naked_functions, thread_local, core_intrinsics,
+           const_max_value, const_atomic_usize_new, const_unique_new)]
 #![no_std]
 
 #[macro_use]
@@ -15,7 +16,6 @@ extern crate x86;
 #[macro_use]
 extern crate alloc_kernel;
 #[macro_use]
-extern crate collections;
 extern crate alloc;
 extern crate bit_field;
 #[macro_use]

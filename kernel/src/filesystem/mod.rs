@@ -1,8 +1,6 @@
-use collections::BTreeMap;
-use spin::{Once, RwLock, RwLockReadGuard, RwLockWriteGuard};
-use collections::string::String;
+use alloc::{BTreeMap, String, Vec};
 use alloc::boxed::Box;
-use collections::Vec;
+use spin::{Once, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 pub use self::tarfs::TarFilesystem;
 

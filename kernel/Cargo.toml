@@ -1,31 +1,38 @@
 [package]
-authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
 name = "kernel"
+description = "Oxide kernel"
+version = "0.0.1"
+authors = ["Michael Spencer <sonrisesoftware@gmail.com>"]
 publish = false
-version = "0.1.0"
+
+[lib]
+crate-type = ["staticlib"]
 
 [dependencies]
 bit_field = "0.7.0"
 bitflags = "0.7.0"
-linked_list_allocator = "0.2.3"
+linked_list_allocator = "0.4.2"
 multiboot2 = "0.3.2"
-nom = "2.1.0"
 once = "0.3"
 rlibc = "*"
 spin = "*"
-tar-parser = { version = "0.5.0", features = ["no_std"] }
 volatile = "*"
 
 [dependencies.alloc_kernel]
 path = "../alloc_kernel"
 
 [dependencies.lazy_static]
-features = ["spin_no_std"]
 version = "0.2.1"
+features = ["spin_no_std"]
 
 [dependencies.x86]
-default-features = false
 version = "*"
+default-features = false
 
-[lib]
-crate-type = ["staticlib"]
+[dependencies.tar-parser]
+version = "0.5.0"
+default-features = false
+
+[dependencies.nom]
+version = "3.2.1"
+default-features = false
