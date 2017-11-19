@@ -173,10 +173,10 @@ pub fn init(boot_info: &BootInformation) -> MemoryController {
     let multiboot_start = boot_info.start_address();
     let multiboot_end = boot_info.end_address();
 
-    println!("Kernel start: {:#x}, kernel end: {:#x}",
+    info!("Kernel start: {:#x}, kernel end: {:#x}",
              kernel_start,
              kernel_end);
-    println!("Multiboot start: {:#x}, multiboot end: {:#x}",
+    info!("Multiboot start: {:#x}, multiboot end: {:#x}",
              multiboot_start,
              multiboot_end);
 
@@ -197,7 +197,7 @@ pub fn init(boot_info: &BootInformation) -> MemoryController {
         stack_allocator::StackAllocator::new(stack_alloc_range)
     };
 
-    println!("Memory manager initialized.");
+    ok!("Memory manager initialized.");
 
     MemoryController {
         active_table: active_page_table,

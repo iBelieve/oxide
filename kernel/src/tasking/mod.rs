@@ -23,7 +23,7 @@ pub fn init() {
 
     CURRENT_TASK_ID.store(task.id, Ordering::SeqCst);
 
-    println!("Tasking initialized.");
+    ok!("Tasking initialized.");
 }
 
 fn init_tasks() -> RwLock<TaskList> {

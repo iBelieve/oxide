@@ -129,7 +129,7 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
                 continue;
             }
 
-            println!("Mapping section at address: {:#x}, size: {:#x}",
+            info!("Mapping section at address: {:#x}, size: {:#x}",
                 section.addr, section.size);
 
             assert!(section.addr as usize % PAGE_SIZE == 0,
@@ -157,7 +157,7 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
         for module in boot_info.module_tags() {
             let module_start = Frame::containing_address(module.start_address() as usize);
             let module_end = Frame::containing_address(module.end_address() as usize - 1);
-            println!("Mapping module {} from: {:#x} to: {:#x}" ,
+            info!("Mapping module {} from: {:#x} to: {:#x}" ,
                 module.name(), module.start_address(), module.end_address());
             for frame in Frame::range_inclusive(module_start, module_end) {
                 if frame < multiboot_start || frame > multiboot_end {
@@ -171,14 +171,14 @@ pub fn init<A>(allocator: &mut A, boot_info: &BootInformation) -> ActivePageTabl
             mapper.identity_map(frame, PRESENT, allocator);
         }
     });
-    println!(" - Remapped the kernel");
+    info!(" - Remapped the kernel");
 
     let old_table = active_table.switch(new_table);
 
     // turn the old p4 page into a guard page
     let old_p4_page = Page::containing_address(old_table.p4_frame.start_address() + KERNEL_OFFSET);
     active_table.unmap(old_p4_page, allocator);
-    println!(" - Guard page at {:#x}", old_p4_page.start_address());
+    info!(" - Guard page at {:#x}", old_p4_page.start_address());
 
     active_table
 }

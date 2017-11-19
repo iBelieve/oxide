@@ -32,6 +32,9 @@ use core::str::from_utf8;
 mod int_like;
 
 #[macro_use]
+mod logging;
+
+#[macro_use]
 mod arch;
 
 mod bitmap;

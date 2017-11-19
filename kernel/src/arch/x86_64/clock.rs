@@ -16,7 +16,7 @@ pub fn init() {
     }
 
     if current_seconds() > 0 {
-        println!("Clock initialized. Current time is: {}", now);
+        ok!("Clock initialized. Current time is: {}", now);
     } else {
         panic!("Clock failed to initialize");
     }

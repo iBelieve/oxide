@@ -9,7 +9,7 @@ pub extern "C" fn kernel_start(multiboot_address: usize) {
 
     vga::init();
 
-    println!("Kernel started.");
+    ok!("Kernel started.");
 
     clock::init();
 

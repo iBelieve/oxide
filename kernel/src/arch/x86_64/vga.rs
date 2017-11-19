@@ -65,6 +65,15 @@ impl ColorCode {
     const fn new(foreground: Color, background: Color) -> ColorCode {
         ColorCode((background as u8) << 4 | (foreground as u8))
     }
+
+    fn foreground(&self) -> Color {
+        unsafe { ::core::mem::transmute(self.0 & 0xF) }
+    }
+
+
+    fn background(&self) -> Color {
+        unsafe { ::core::mem::transmute(self.0 >> 4) }
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -187,6 +196,17 @@ pub fn init() {
 pub fn print(args: fmt::Arguments) {
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
+}
+
+pub fn print_colored(args: fmt::Arguments, foreground: Color) {
+    use core::fmt::Write;
+
+    let mut writer = WRITER.lock();
+    let old_color = writer.color_code;
+
+    writer.color_code = ColorCode::new(foreground, old_color.background());
+    writer.write_fmt(args).unwrap();
+    writer.color_code = old_color;
 }
 
 fn move_cursor(row: usize, column: usize) {

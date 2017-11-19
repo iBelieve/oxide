@@ -149,7 +149,7 @@ pub fn init(memory_controller: &mut MemoryController) {
 
     IDT.load();
 
-    println!("Interrupts initialized");
+    ok!("Interrupts initialized");
 }
 
 extern "C" fn divide_by_zero_handler(stack_frame: &ExceptionStackFrame) {
