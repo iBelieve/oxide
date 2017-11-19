@@ -22,7 +22,7 @@ MAKE_ISO  = tools/bin/grub-mkrescue
 GRUB_FILE = tools/bin/grub-file
 QEMU      = qemu-system-$(ARCH)
 LD        = $(PREFIX)/$(ARCH)-elf-ld
-QEMU_ARGS = -m size=256
+QEMU_ARGS = -curses -m size=256
 
 .PHONY: all run debug tools clean
 
@@ -30,6 +30,10 @@ all: iso
 
 tools:
 	./build_tools.sh
+
+clean:
+	rm -r target
+	rm $(ISO)
 
 iso: $(ISO)
 

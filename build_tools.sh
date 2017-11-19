@@ -93,7 +93,7 @@ install_grub() {
     echo "===== GRUB ====="
     download_tar grub-$GRUB_VERSION.tar.xz ftp://ftp.gnu.org/gnu/grub/grub-$GRUB_VERSION.tar.xz
 
-    pushd grub
+    pushd grub-$GRUB_VERSION
 
     echo "::: Configuring GRUB"
     run ./autogen.sh
