@@ -12,13 +12,23 @@ macro_rules! log {
 }
 
 macro_rules! ok {
-    ($fmt:expr) => (log!("OK", $crate::arch::vga::Color::Green, $fmt));
-    ($fmt:expr, $($arg:tt)*) => (log!("OK", $crate::arch::vga::Color::Green, $fmt, $($arg)*));
+    ($fmt:expr) => (log!(" OK ", $crate::arch::vga::Color::Green, $fmt));
+    ($fmt:expr, $($arg:tt)*) => (log!(" OK ", $crate::arch::vga::Color::Green, $fmt, $($arg)*));
 }
 
 macro_rules! info {
     ($fmt:expr) => (log!("INFO", $crate::arch::vga::Color::Blue, $fmt));
     ($fmt:expr, $($arg:tt)*) => (log!("INFO", $crate::arch::vga::Color::Blue, $fmt, $($arg)*));
+}
+
+macro_rules! warn {
+    ($fmt:expr) => (log!("WARN", $crate::arch::vga::Color::Yellow, $fmt));
+    ($fmt:expr, $($arg:tt)*) => (log!("WARN", $crate::arch::vga::Color::Yellow, $fmt, $($arg)*));
+}
+
+macro_rules! fail {
+    ($fmt:expr) => (log!("FAIL", $crate::arch::vga::Color::Red, $fmt));
+    ($fmt:expr, $($arg:tt)*) => (log!("FAIL", $crate::arch::vga::Color::Red, $fmt, $($arg)*));
 }
 
 pub fn status(label: &str, color: Color) {

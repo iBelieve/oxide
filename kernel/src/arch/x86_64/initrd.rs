@@ -21,7 +21,7 @@ pub fn init(boot_info: &BootInformation) {
             filesystem::mount("/initrd", box fs);
         }
         e  => {
-            println!("error or incomplete: {:?}", e);
+            fail!("error or incomplete: {:?}", e);
             panic!("cannot parse tar archive");
         }
     }

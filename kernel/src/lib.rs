@@ -55,9 +55,9 @@ fn kernel_main() {
     println!("Back in main.");
 
     if let Some(mut file) = filesystem::fs().get_file("/initrd/hello.txt") {
-        println!("Found file: {}", from_utf8(file.read().as_slice()).expect("Unable to decode file"));
+        ok!("Found file: {}", from_utf8(file.read().as_slice()).expect("Unable to decode file"));
     } else {
-        println!("File not found :(");
+        fail!("File not found :(");
     }
 }
 

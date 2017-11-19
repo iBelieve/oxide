@@ -153,18 +153,18 @@ pub fn init(memory_controller: &mut MemoryController) {
 }
 
 extern "C" fn divide_by_zero_handler(stack_frame: &ExceptionStackFrame) {
-    println!("\nEXCEPTION: DIVIDE BY ZERO\n\n{:#?}",
+    fail!("\nEXCEPTION: DIVIDE BY ZERO\n\n{:#?}",
              stack_frame);
     loop {}
 }
 
 extern "C" fn breakpoint_handler(stack_frame: &ExceptionStackFrame) {
-    println!("\nEXCEPTION: BREAKPOINT at {:#x}\n\n{:#?}",
+    fail!("\nEXCEPTION: BREAKPOINT at {:#x}\n\n{:#?}",
             stack_frame.instruction_pointer, stack_frame);
 }
 
 extern "C" fn invalid_opcode_handler(stack_frame: &ExceptionStackFrame) {
-    println!("\nEXCEPTION: INVALID OPCODE at {:#x}\n\n{:#?}",
+    fail!("\nEXCEPTION: INVALID OPCODE at {:#x}\n\n{:#?}",
             stack_frame.instruction_pointer, stack_frame);
     loop {}
 }
@@ -172,16 +172,16 @@ extern "C" fn invalid_opcode_handler(stack_frame: &ExceptionStackFrame) {
 extern "C" fn double_fault_handler(stack_frame: &ExceptionStackFrame,
     _error_code: u64)
 {
-    println!("\nEXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
+    fail!("\nEXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
     loop {}
 }
 
 extern "C" fn page_fault_handler(stack_frame: &ExceptionStackFrame, error_code: u64) {
     use x86::shared::control_regs;
-    println!("\nEXCEPTION: PAGE FAULT while accessing {:#x}\
-              \n    Error code: {:?}\
-              \n\
-              \n{:#?}",
+    fail!("\nEXCEPTION: PAGE FAULT while accessing {:#x}\
+           \n    Error code: {:?}\
+           \n\
+           \n{:#?}",
             unsafe { control_regs::cr2() }, PageFaultErrorCode::from_bits(error_code).unwrap(),
             stack_frame);
     loop {}
