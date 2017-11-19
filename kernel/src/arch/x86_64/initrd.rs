@@ -1,6 +1,5 @@
 use multiboot2::BootInformation;
 use core::slice;
-use core::str::from_utf8;
 use tar::*;
 use nom::IResult;
 use filesystem::{self, TarFilesystem};

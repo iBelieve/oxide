@@ -70,7 +70,6 @@ impl ColorCode {
         unsafe { ::core::mem::transmute(self.0 & 0xF) }
     }
 
-
     fn background(&self) -> Color {
         unsafe { ::core::mem::transmute(self.0 >> 4) }
     }

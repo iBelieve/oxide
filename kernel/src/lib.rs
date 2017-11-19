@@ -1,6 +1,6 @@
 #![feature(asm, const_fn, fixed_size_array, lang_items, unique, alloc, box_syntax,
-           drop_types_in_const, naked_functions, thread_local, core_intrinsics,
-           const_max_value, const_atomic_usize_new, const_unique_new)]
+           naked_functions, thread_local, core_intrinsics, const_max_value,
+           const_atomic_usize_new, const_unique_new)]
 #![no_std]
 
 #[macro_use]
@@ -13,7 +13,6 @@ extern crate spin;
 extern crate volatile;
 #[macro_use]
 extern crate x86;
-#[macro_use]
 extern crate alloc_kernel;
 #[macro_use]
 extern crate alloc;
@@ -37,8 +36,7 @@ mod logging;
 #[macro_use]
 mod arch;
 
-mod bitmap;
-mod time;
+pub mod time;
 mod runtime;
 mod tasking;
 mod filesystem;

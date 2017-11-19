@@ -1,6 +1,5 @@
 use alloc::boxed::Box;
 use arch::tasking::Context;
-use core::mem;
 use core::ops::Deref;
 use core::sync::atomic::AtomicUsize;
 use super::{tasks, exit, switch};
