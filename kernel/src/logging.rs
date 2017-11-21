@@ -32,7 +32,7 @@ macro_rules! fail {
 }
 
 pub fn status(label: &str, color: Color) {
-    print(format_args!("[ "));
+    print(format_args!("["));
     print_colored(format_args!("{}", label), color);
-    print(format_args!(" ] "));
+    print(format_args!("] "));
 }
